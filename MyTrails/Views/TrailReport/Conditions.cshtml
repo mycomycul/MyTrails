@@ -1,0 +1,86 @@
+﻿@model IEnumerable<MyTrails.ViewModels.TrailConditions>
+
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>View</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TrailName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Zone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Elevation)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Miles)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Conditions)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InfoLink)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Updated)
+        </th>
+        <th></th>
+    </tr>
+
+@*@for (int i = 0; i < Model.Select(x => x.Zone).Distinct().Count(); i++)
+{
+    var Zones = Model.Select(x=>x.Zone)
+}*@
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @if (item.InfoLink == "" || item.InfoLink == null)
+            {
+            @Html.DisplayFor(modelItem => item.TrailName)
+            }
+            else
+            {
+                <a href="https://@item.InfoLink">@item.TrailName</a>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Zone)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Elevation)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Miles)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Conditions)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InfoLink)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Updated)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>

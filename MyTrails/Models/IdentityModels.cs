@@ -16,6 +16,10 @@ namespace MyTrails.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+        
+
+        
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -29,5 +33,9 @@ namespace MyTrails.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Point> Points { get; set; }
+        public DbSet<Trail> Trails { get; set; }
+        public DbSet<TrailReport> TrailReports { get; set; }
     }
 }
