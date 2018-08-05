@@ -36,6 +36,6 @@ namespace MyTrails.Models
 
         public DbSet<Point> Points { get; set; }
         public DbSet<Trail> Trails { get; set; }
-        public DbSet<TrailReport> TrailReports { get; set; }
+        public DbSet<Condition> Conditions { get; set; }
     }
 }

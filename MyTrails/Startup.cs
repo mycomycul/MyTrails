@@ -9,6 +9,8 @@ namespace MyTrails
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+
         }
+
     }
 }
