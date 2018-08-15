@@ -17,7 +17,8 @@ namespace MyTrails.Controllers
         // GET: Condition
         public ActionResult Index()
         {
-            return View(db.Conditions.ToList());
+            var model = db.Conditions.ToList();
+            return View(model);
         }
 
         // GET: Condition/Details/5

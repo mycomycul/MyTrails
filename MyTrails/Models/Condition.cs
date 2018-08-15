@@ -11,8 +11,9 @@ namespace MyTrails.Models
         public int PercentSnowCover { get; set; }
         public string Description { get; set; }
         public DateTime? Date { get; set; }
+        public string TrailId { get; set; }
 
-        public virtual Trail TrailId { get; set; }
+        public virtual Trail Trail { get; set; }
 
         public Condition()
         {

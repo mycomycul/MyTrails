@@ -17,7 +17,7 @@ namespace MyTrails.Models
         public float? Miles { get; set; }
         public string Agency { get; set; }
 
-        public virtual List<Condition> Conditions { get; set; }
+        public virtual ICollection<Condition> Conditions { get; set; }
         /// <summary>
         /// Link to information page on NPS.gov
         /// </summary>

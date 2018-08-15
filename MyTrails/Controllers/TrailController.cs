@@ -189,7 +189,7 @@ namespace MyTrails.Controllers
                 }
                 db.SaveChanges();
             }
-            return View("Index");
+            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

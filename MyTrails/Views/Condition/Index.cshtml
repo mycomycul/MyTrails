@@ -10,7 +10,7 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 @{
-    var zones = Model.Select(x => x.TrailId.Zone).Distinct();
+    var zones = Model.Select(x => x.Trail.Zone).Distinct();
 }
 @for (int i = 0; i < zones.Count(); i++)
 {
@@ -18,7 +18,7 @@
     <table class="table">
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TrailId.TrailName)
+                @Html.DisplayNameFor(model => model.Trail.TrailName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.PercentSnowCover)
@@ -34,11 +34,11 @@
 
 
 
-        @foreach (var item in Model.Where(x => x.TrailId.Zone == zones.ElementAt(i)))
+        @foreach (var item in Model.Where(x => x.Trail.Zone == zones.ElementAt(i)))
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.TrailId.TrailName)
+                @Html.DisplayFor(modelItem => item.Trail.TrailName)
 
             </td>
             <td>

@@ -217,6 +217,10 @@
     <Compile Include="Migrations\201808051752544_initialCreate.Designer.cs">
       <DependentUpon>201808051752544_initialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808152339360_FixTrailConditionLink.cs" />
+    <Compile Include="Migrations\201808152339360_FixTrailConditionLink.Designer.cs">
+      <DependentUpon>201808152339360_FixTrailConditionLink.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condition.cs" />
@@ -321,6 +325,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201808051752544_initialCreate.resx">
       <DependentUpon>201808051752544_initialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808152339360_FixTrailConditionLink.resx">
+      <DependentUpon>201808152339360_FixTrailConditionLink.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
