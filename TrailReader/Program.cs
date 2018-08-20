@@ -22,12 +22,11 @@ namespace TrailReader
                 dynamic trailStore = new ExpandoObject();
 
 
-                trailStore.fields = trail["fields"];
+                trailStore.fields = new List<string>();
 
-
-                for (int i = 0; i < trailStore.fields.Length; i++)
+                for (int i = 0; i < trail["fields"].Length; i++)
                 {
-                    
+                    trailStore.fields.Add(trail["fields"][i]["name"]);
                 }
 
                 Console.Read();
