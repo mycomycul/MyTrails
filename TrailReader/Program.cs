@@ -14,20 +14,32 @@ namespace TrailReader
         static void Main(string[] args)
         {
 
-                using (StreamReader r = new StreamReader(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"))
-                {
-                    var trailJson = r.ReadToEnd();
-                    JavaScriptSerializer js = new JavaScriptSerializer();
-                    dynamic trail = js.Deserialize<dynamic>(trailJson);
+            using (StreamReader r = new StreamReader(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"))
+            {
+                var trailJson = r.ReadToEnd();
+                JavaScriptSerializer js = new JavaScriptSerializer();
+                dynamic trail = js.Deserialize<dynamic>(trailJson);
                 dynamic trailStore = new ExpandoObject();
 
 
                 trailStore.fields = new List<string>();
-
                 for (int i = 0; i < trail["fields"].Length; i++)
                 {
                     trailStore.fields.Add(trail["fields"][i]["name"]);
                 }
+
+                foreach (var item in trail["features"])
+                {
+                    var t = item["attributes"];
+                    foreach (var attribute in t)
+                    {
+                        var k = attribute.Key;
+                        var z = attribute.Value;
+                        Console.WriteLine(k + " = " + z);
+                    }
+                }
+
+
 
                 Console.Read();
 
