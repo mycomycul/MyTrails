@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,9 +19,22 @@ namespace TrailReader
                     var trailJson = r.ReadToEnd();
                     JavaScriptSerializer js = new JavaScriptSerializer();
                     dynamic trail = js.Deserialize<dynamic>(trailJson);
+                dynamic trailStore = new ExpandoObject();
+
+
+                trailStore.fields = trail["fields"];
+
+
+                for (int i = 0; i < trailStore.fields.Length; i++)
+                {
+                    
                 }
+
                 Console.Read();
-            
+
+            }
+
+
         }
     }
 }
