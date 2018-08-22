@@ -194,16 +194,16 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
-        public void ImportJSONtrail()
-        {
-            using(StreamReader r = new StreamReader("C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"))
-            {
-                var trailJson = r.ReadToEnd();
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                dynamic trail = js.Deserialize<dynamic>(trailJson);
-            }
-            Console.Read();
-        }
+        //public void ImportJSONtrail()
+        //{
+        //    using(StreamReader r = new StreamReader("C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"))
+        //    {
+        //        var trailJson = r.ReadToEnd();
+        //        JavaScriptSerializer js = new JavaScriptSerializer();
+        //        dynamic trail = js.Deserialize<dynamic>(trailJson);
+        //    }
+        //    Console.Read();
+        //}
 
 
 
