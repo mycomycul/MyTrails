@@ -11,6 +11,7 @@ namespace MyTrails.Libraries
 {
     public class GeoJSONTools
     {
+        ApplicationDbContext db = new ApplicationDbContext();
        public void AddElevation()
         {
 
@@ -45,20 +46,26 @@ namespace MyTrails.Libraries
             Console.Read();
 
         }
-        public void InputGeoJson2(string filename)
+        public void InputGeoJson2()
         {
             //var t = JsonConvert.DeserializeObject(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
             var t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
             IList<JToken> results = t["features"].Children().ToList();
             IList<TrailModel> trails = new List<TrailModel>();
+            var TrailMatchCount = 0;
             foreach (JToken item in results)
             {
                 TrailModel trail = item["attributes"].ToObject<TrailModel>();
                 trail.GEOMETRY = item["geometry"]["paths"][0];
-                trails.Add(trail);
+                Trail trailToUpdate = new Trail();
+                if(db.Trails.Where(x => x.TrailName.ToUpper() == trail.TRLNAME).Any()){
+                    trailToUpdate = db.Trails.Where(x => x.TrailName.ToUpper() == trail.TRLNAME).First();
+                    TrailMatchCount++;
+                }
+                
                 // Console.Read();
             }
-            Console.Read();
+            var bob = "";
         }
 
 
