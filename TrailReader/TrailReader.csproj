@@ -53,5 +53,11 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyTrails\MyTrails.csproj">
+      <Project>{2cca05c2-3fbb-4ede-93ec-bcba178d1761}</Project>
+      <Name>MyTrails</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
