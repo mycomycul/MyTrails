@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Spatial;
 using System.Linq;
 using System.Web;
 
@@ -16,6 +17,7 @@ namespace MyTrails.Models
         public string Elevation { get; set; }
         public float? Miles { get; set; }
         public string Agency { get; set; }
+        public DbGeography Geography { get; set; }
 
         public virtual ICollection<Condition> Conditions { get; set; }
         /// <summary>
