@@ -21,7 +21,7 @@ namespace TrailReader
                 /* read JSON with using System.Web.Script.Serialization;*/
                 //   JavaScriptSerializer js = new JavaScriptSerializer();
                 //    dynamic trail = js.Deserialize<dynamic>(trailJson);
-                    //dynamic trailStore = new ExpandoObject();
+                //dynamic trailStore = new ExpandoObject();
 
 
                 //    trailStore.fields = new List<string>();
@@ -42,23 +42,26 @@ namespace TrailReader
                 //    }
 
                 dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-                dynamic trailStore = new ExpandoObject();
-                trailStore.fields = new List<string>();
+                //dynamic trailStore = new ExpandoObject();
+                var trailStore = new List<Trail>();
+                var trailFeatures = new List<string>();
 
                 for (int i = 0; i < trail["fields"].Count; i++)
                 {
-                    trailStore.fields.Add((string)trail["fields"][i]["name"]);
+                    trailFeatures.Add((string)trail["fields"][i]["name"]);
                 }
-                foreach (var item in trail["features"])
-                {
-                    var t = item["attributes"];
-                    foreach (var attribute in t)
+                    foreach (var item in trail["features"])
                     {
-                        var k = attribute.Name;
-                        var z = attribute.Value;
-                        Console.WriteLine(k + " = " + z);
+
+                        Trail newTrail = new Trail();
+                        newTrail.Id = item["attributes"]["OBJECTID"];
+                        newTrail.TrailName = item["attributes"]["TRLNAME"];
+                        newTrail.Status = item["attributes"]["TRLSTATUS"];
+                        newTrail.Notes = item["attributes"]["NOTES"];
+
+                        trailStore.Add(newTrail);
                     }
-                }
+                
 
 
 
@@ -83,3 +86,4 @@ namespace TrailReader
         }
     }
 }
+
