@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace TrailReader
 {
@@ -17,23 +18,43 @@ namespace TrailReader
             using (StreamReader r = new StreamReader(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"))
             {
                 var trailJson = r.ReadToEnd();
-                JavaScriptSerializer js = new JavaScriptSerializer();
-                dynamic trail = js.Deserialize<dynamic>(trailJson);
+                /* read JSON with using System.Web.Script.Serialization;*/
+                //   JavaScriptSerializer js = new JavaScriptSerializer();
+                //    dynamic trail = js.Deserialize<dynamic>(trailJson);
+                    //dynamic trailStore = new ExpandoObject();
+
+
+                //    trailStore.fields = new List<string>();
+                //    for (int i = 0; i < trail["fields"].Length; i++)
+                //    {
+                //        trailStore.fields.Add(trail["fields"][i]["name"]);
+                //    }
+
+                //    foreach (var item in trail["features"])
+                //    {
+                //        var t = item["attributes"];
+                //        foreach (var attribute in t)
+                //        {
+                //            var k = attribute.Key;
+                //            var z = attribute.Value;
+                //            Console.WriteLine(k + " = " + z);
+                //        }
+                //    }
+
+                dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
                 dynamic trailStore = new ExpandoObject();
-
-
                 trailStore.fields = new List<string>();
-                for (int i = 0; i < trail["fields"].Length; i++)
-                {
-                    trailStore.fields.Add(trail["fields"][i]["name"]);
-                }
 
+                for (int i = 0; i < trail["fields"].Count; i++)
+                {
+                    trailStore.fields.Add((string)trail["fields"][i]["name"]);
+                }
                 foreach (var item in trail["features"])
                 {
                     var t = item["attributes"];
                     foreach (var attribute in t)
                     {
-                        var k = attribute.Key;
+                        var k = attribute.Name;
                         var z = attribute.Value;
                         Console.WriteLine(k + " = " + z);
                     }
@@ -41,10 +62,23 @@ namespace TrailReader
 
 
 
+
+
+
                 Console.Read();
 
             }
 
+
+        }
+
+
+        public class Trail
+        {
+            public int Id { get; set; }
+            public string TrailName { get; set; }
+            public string Status { get; set; }
+            public string Notes { get; set; }
 
         }
     }
