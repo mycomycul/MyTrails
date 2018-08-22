@@ -16,6 +16,7 @@ namespace MyTrails.Models
         public string ShortDescription { get; set; }
         public string Elevation { get; set; }
         public float? Miles { get; set; }
+        public string Status { get; set; }
         public string Agency { get; set; }
         public DbGeography Geography { get; set; }
 
@@ -30,6 +31,7 @@ namespace MyTrails.Models
             Id = Guid.NewGuid().ToString();
             Conditions = new List<Condition>();
         }
+ 
 
 
 
