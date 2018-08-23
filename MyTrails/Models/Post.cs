@@ -5,10 +5,13 @@ using System.Web;
 
 namespace MyTrails.Models
 {
-    public class TrailReport
+    public class Post
     {
-
-        //public int Id { get; set; }
+        public Post()
+        {
+            this.Trails = new HashSet<Trail>();
+        }
+        public string Id { get; set; }
         ///// <summary>
         ///// Full Length Forum Post
         ///// </summary>
@@ -24,7 +27,7 @@ namespace MyTrails.Models
         ///// <summary>
         ///// List of all trails that were travelled, even partially
         ///// </summary>
-        //public virtual ICollection<Trail> TrailsTravelled { get; set; }
+        public virtual ICollection<Trail> Trails { get; set; }//Many to Many
 
 
         //TODO: Create Constructor that adds all trails travelled based on Points included.

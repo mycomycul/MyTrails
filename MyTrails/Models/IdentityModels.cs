@@ -34,7 +34,6 @@ namespace MyTrails.Models
             return new ApplicationDbContext();
         }
 
-        public DbSet<Point> Points { get; set; }
         public DbSet<Trail> Trails { get; set; }
         public DbSet<Condition> Conditions { get; set; }
     }
