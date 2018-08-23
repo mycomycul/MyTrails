@@ -17,18 +17,26 @@ namespace TrailReader
     {
         static void Main(string[] args)
         {
+            //var t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
+            //IList<JToken> results = t["features"].Children().ToList();
+            ////var t = JsonConvert.DeserializeObject(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\
+            //IList<TrailModel> trails = new List<TrailModel>();
+            //foreach (JToken item in results)
+            //{
+            //    TrailModel trail = item["attributes"].ToObject<TrailModel>();
+            //    trail.GEOMETRY = item["geometry"]["paths"][0];
+            //    trails.Add(trail);
+            //   // Console.Read();
+            //}
 
             //var t = JsonConvert.DeserializeObject(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            var t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            IList<JToken> results = t["features"].Children().ToList();
-            IList<TrailModel> trails = new List<TrailModel>();
-            foreach (JToken item in results)
+            JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json")) as JObject;
+            dynamic traildata = t;
+            foreach (dynamic trail in traildata.features)
             {
-                TrailModel trail = item["attributes"].ToObject<TrailModel>();
-                trail.GEOMETRY = item["geometry"]["paths"][0];
-                trails.Add(trail);
-               // Console.Read();
+                Console.WriteLine(trail.attributes.TRLNAME);
             }
+            var bob = "";
             Console.Read();
 
         }
