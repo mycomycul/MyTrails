@@ -38,7 +38,7 @@ namespace MyTrails.Libraries
                 newTrail.Id = item["attributes"]["OBJECTID"];
                 newTrail.TrailName = item["attributes"]["TRLNAME"];
                 newTrail.Status = item["attributes"]["TRLSTATUS"];
-                newTrail.ShortDescription = item["attributes"]["NOTES"];
+               // newTrail.ShortDescription = item["attributes"]["NOTES"];
                 trailStore.Add(newTrail);
 
                 }
@@ -49,42 +49,17 @@ namespace MyTrails.Libraries
         public void InputGeoJson2()
         {
             //var t = JsonConvert.DeserializeObject(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            var t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            IList<JToken> results = t["features"].Children().ToList();
-            IList<TrailModel> trails = new List<TrailModel>();
-            var TrailMatchCount = 0;
-            foreach (JToken item in results)
+            JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
+            dynamic trails = t;
+            foreach (dynamic trail in trails.features)
             {
-                TrailModel trail = item["attributes"].ToObject<TrailModel>();
-                trail.GEOMETRY = item["geometry"]["paths"][0];
-                Trail trailToUpdate = new Trail();
-                if(db.Trails.Where(x => x.TrailName.ToUpper() == trail.TRLNAME).Any()){
-                    trailToUpdate = db.Trails.Where(x => x.TrailName.ToUpper() == trail.TRLNAME).First();
-                    TrailMatchCount++;
-                }
-                
-                // Console.Read();
+   
+                    // Console.Read();
             }
-            var bob = "";
+
+
         }
 
-
-        public class TrailModel
-        {
-            //public object displayFieldName { get; set; }
-            //public object fieldAliases { get; set; }
-            //public object features { get; set; }
-            //public object fields { get; set; }
-            //public object geometryType { get; set; }
-
-            //public object spatialReference { get; set; }
-
-            public string TRLNAME { get; set; }
-            public string TRLSTATUS { get; set; }
-            public string NOTES { get; set; }
-            public string UNITCODE { get; set; }
-            public object GEOMETRY { get; set; }
-
         }
+
     }
-}

@@ -73,7 +73,7 @@ namespace MyTrails.Libraries
                     if (!db.Trails.Where(x => x.TrailName == trailName).Any())
                     {
                         trail.TrailName = CleanFromHTML(rowCells.ElementAt(0).InnerText);
-                        trail.Miles = ExtractMiles(CleanFromHTML(rowCells.ElementAt(2).InnerText));
+                        trail.TotalMiles = ExtractMiles(CleanFromHTML(rowCells.ElementAt(2).InnerText));
                         trail.ShortDescription = CleanFromHTML(rowCells.ElementAt(1).InnerText);
                         trail.Elevation = ExtractElevations(CleanFromHTML(rowCells.ElementAt(2).InnerText));
                         trail.InfoHTMLLink = rowCells.ElementAt(0).CssSelect("a").Any() ? baseUrl.Host + CleanFromHTML(rowCells.ElementAt(0).CssSelect("a").First().GetAttributeValue("href")) : null;
