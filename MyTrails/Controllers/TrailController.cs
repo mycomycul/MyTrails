@@ -151,7 +151,7 @@ namespace MyTrails.Controllers
                     if (!db.Trails.Where(x => x.TrailName == trailName).Any())
                     {
                         trail.TrailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
-                        trail.Miles = Scraper.ExtractMiles(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
+                        trail.TotalMiles = Scraper.ExtractMiles(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
                         trail.ShortDescription = Scraper.CleanFromHTML(rowCells.ElementAt(1).InnerText);
                         trail.Elevation = Scraper.ExtractElevations(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
                         trail.InfoHTMLLink = rowCells.ElementAt(0).CssSelect("a").Any() ? baseUrl.Host + Scraper.CleanFromHTML(rowCells.ElementAt(0).CssSelect("a").First().GetAttributeValue("href")) : null;
