@@ -24,16 +24,7 @@ namespace TrailReader
             foreach (dynamic trail in traildata.features)
             {
                 //Check if this should be a point or line
-                string GeometryType;
-                var PointCount = trail.geometry.paths[0].Count;
-                if (PointCount > 1)
-                {
-                    GeometryType = "LineString";
-                }
-                else
-                {
-                    GeometryType = "Point";
-                }
+                string LineType = GeometryType(trail.geometry.paths[0].Count);
                 Console.Read();
 
             }
@@ -42,6 +33,18 @@ namespace TrailReader
 
         }
 
+        public static string GeometryType(int pointcount)
+        {
+            if (pointcount > 1)
+            {
+                return "LineString";
+            }
+            else
+            {
+               return "Point";
+            }
+            
+        }
 
     }
 
