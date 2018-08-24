@@ -10,6 +10,8 @@ using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MyTrails.Models;
+using System.Data.Entity.Spatial;
+
 
 namespace TrailReader
 {
@@ -17,18 +19,33 @@ namespace TrailReader
     {
         static void Main(string[] args)
         {
+            List<TrailSection> Trails = new List<TrailSection>();
 
             JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json")) as JObject;
             dynamic traildata = t;
-            
+            var wkid = traildata.spatialReference.wkid;
+
             foreach (dynamic trail in traildata.features)
             {
-                //Check if this should be a point or line
                 string LineType = GeometryType(trail.geometry.paths[0].Count);
-                Console.Read();
+                //Check if this should be a point or line
+                TrailSection ts = new TrailSection();
+                string geometryString = LineType + " ("; 
+                    foreach (dynamic point in trail.geometry.paths[0])
+                {
+                    geometryString += (string)point[0] + " " + (string)point[1] + ",";
+                }
+                geometryString = geometryString.Remove(geometryString.Length - 1);
+                geometryString += ")";
 
+                ts.ShortDescription = trail.attributes.TRLNAME;
+                ts.Geography = DbGeography.FromText(geometryString, (int)wkid);    
+                
+               
+                Trails.Add(ts);
             }
-            var bob = "";
+
+
             Console.Read();
 
         }

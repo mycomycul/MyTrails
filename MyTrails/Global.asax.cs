@@ -15,12 +15,13 @@ namespace MyTrails
         {
 
             // Enables use of spatial data types
-            SqlServerTypes.Utilities.LoadNativeAssemblies(Server.MapPath(""));
-            SqlProviderServices.SqlServerTypesAssemblyName = "Microsoft.SqlServer.Types, Version=14.0.314.76, Culture=neutral, PublicKeyToken=89845dcd8080cc91";
+            
+            //SqlProviderServices.SqlServerTypesAssemblyName = "Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91";
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            SqlServerTypes.Utilities.LoadNativeAssemblies(Server.MapPath("~/bin"));
         }
     }
 }
