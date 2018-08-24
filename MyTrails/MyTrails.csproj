@@ -232,6 +232,10 @@
     <Compile Include="Migrations\201808241943049_AddDBGeography.Designer.cs">
       <DependentUpon>201808241943049_AddDBGeography.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808242217095_TrailSectionIDToString.cs" />
+    <Compile Include="Migrations\201808242217095_TrailSectionIDToString.Designer.cs">
+      <DependentUpon>201808242217095_TrailSectionIDToString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condition.cs" />
@@ -360,6 +364,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201808241943049_AddDBGeography.resx">
       <DependentUpon>201808241943049_AddDBGeography.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808242217095_TrailSectionIDToString.resx">
+      <DependentUpon>201808242217095_TrailSectionIDToString.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

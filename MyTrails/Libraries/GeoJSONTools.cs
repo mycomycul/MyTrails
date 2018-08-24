@@ -59,7 +59,7 @@ namespace MyTrails.Libraries
 
             //        // Console.Read();
             //}
-            IList<TrailSection> Trails = new List<TrailSection>();
+            IList<TrailSection> otherTrails = new List<TrailSection>();
             //ICollection<TrailSection> Points = new List<TrailSection>();
 
             JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json")) as JObject;
@@ -79,16 +79,34 @@ namespace MyTrails.Libraries
                 geometryString = geometryString.Remove(geometryString.Length - 1);
                 geometryString += ")";
 
+
+                ts.Id = trail.attributes.FEATUREID;
                 ts.ShortDescription = trail.attributes.TRLNAME;
                 ts.Geography = DbGeography.FromText(geometryString, (int)wkid);
+                ts.Status = trail.attributes.TRLSTATUS;
 
-                Trails.Add(ts);
+                string trailName = trail.attributes.TRLNAME;
+                if (db.Trails.Where(x => x.TrailName.ToUpper() == trailName).Any())
+                {
+                    var currentTrail = db.Trails.Where(x => x.TrailName.ToUpper() == trailName).First();
+                    if (currentTrail.TrailSections.Count < 1)
+                    {
+                        currentTrail.Status = ts.Status;
+                    }
+                    currentTrail.TrailSections.Add(ts);
+                }
+                else
+                {
+                    otherTrails.Add(ts);
+                }
 
 
-               // Console.Read();
+
                 
+
+                // Console.Read();
             }
-            var sortedTrails = Trails.OrderByDescending(x => x.Geography.PointCount).ToList();
+
             var b = "";
         }
         public static string GeometryType(int pointcount)
