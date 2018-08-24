@@ -40,7 +40,7 @@ namespace MyTrails.Models
 
     public class TrailSection
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string ShortDescription { get; set; }
         public DbGeography Geography { get; set; }
         public string Status { get; set; }
