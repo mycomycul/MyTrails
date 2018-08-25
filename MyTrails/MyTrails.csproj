@@ -216,25 +216,9 @@
     </Compile>
     <Compile Include="Libraries\GeoJSONTools.cs" />
     <Compile Include="Libraries\Scraper.cs" />
-    <Compile Include="Migrations\201808051752544_initialCreate.cs" />
-    <Compile Include="Migrations\201808051752544_initialCreate.Designer.cs">
-      <DependentUpon>201808051752544_initialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808152339360_FixTrailConditionLink.cs" />
-    <Compile Include="Migrations\201808152339360_FixTrailConditionLink.Designer.cs">
-      <DependentUpon>201808152339360_FixTrailConditionLink.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808222117304_AddGeography.cs" />
-    <Compile Include="Migrations\201808222117304_AddGeography.Designer.cs">
-      <DependentUpon>201808222117304_AddGeography.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808241943049_AddDBGeography.cs" />
-    <Compile Include="Migrations\201808241943049_AddDBGeography.Designer.cs">
-      <DependentUpon>201808241943049_AddDBGeography.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201808242217095_TrailSectionIDToString.cs" />
-    <Compile Include="Migrations\201808242217095_TrailSectionIDToString.Designer.cs">
-      <DependentUpon>201808242217095_TrailSectionIDToString.cs</DependentUpon>
+    <Compile Include="Migrations\201808250225304_InitialCreate.cs" />
+    <Compile Include="Migrations\201808250225304_InitialCreate.Designer.cs">
+      <DependentUpon>201808250225304_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -353,20 +337,8 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201808051752544_initialCreate.resx">
-      <DependentUpon>201808051752544_initialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808152339360_FixTrailConditionLink.resx">
-      <DependentUpon>201808152339360_FixTrailConditionLink.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808222117304_AddGeography.resx">
-      <DependentUpon>201808222117304_AddGeography.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808241943049_AddDBGeography.resx">
-      <DependentUpon>201808241943049_AddDBGeography.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201808242217095_TrailSectionIDToString.resx">
-      <DependentUpon>201808242217095_TrailSectionIDToString.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201808250225304_InitialCreate.resx">
+      <DependentUpon>201808250225304_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

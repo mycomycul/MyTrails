@@ -7,13 +7,13 @@ namespace MyTrails.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class TrailSectionIDToString : IMigrationMetadata
+    public sealed partial class InitialCreate : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(TrailSectionIDToString));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
         
         string IMigrationMetadata.Id
         {
-            get { return "201808242217095_TrailSectionIDToString"; }
+            get { return "201808250225304_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

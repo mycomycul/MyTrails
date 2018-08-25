@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Spatial;
 using System.Linq;
 using System.Web;
@@ -27,8 +29,8 @@ namespace MyTrails.Models
 
 
         public virtual ICollection<Post> Posts { get; set; }
-        public virtual ICollection<TrailSection> TrailSections { get; set; }
-        public virtual ICollection<Condition> Conditions { get; set; }
+        public virtual List<TrailSection> TrailSections { get; set; }
+        public virtual List<Condition> Conditions { get; set; }
 
         public Trail()
         {
@@ -40,6 +42,8 @@ namespace MyTrails.Models
 
     public class TrailSection
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public string Id { get; set; }
         public string ShortDescription { get; set; }
         public DbGeography Geography { get; set; }

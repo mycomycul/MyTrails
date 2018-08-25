@@ -3,7 +3,7 @@ namespace MyTrails.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class initialCreate : DbMigration
+    public partial class InitialCreate : DbMigration
     {
         public override void Up()
         {
@@ -15,11 +15,11 @@ namespace MyTrails.Migrations
                         PercentSnowCover = c.Int(nullable: false),
                         Description = c.String(),
                         Date = c.DateTime(),
-                        TrailId_Id = c.String(maxLength: 128),
+                        TrailId = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Trails", t => t.TrailId_Id)
-                .Index(t => t.TrailId_Id);
+                .ForeignKey("dbo.Trails", t => t.TrailId)
+                .Index(t => t.TrailId);
             
             CreateTable(
                 "dbo.Trails",
@@ -29,26 +29,36 @@ namespace MyTrails.Migrations
                         TrailName = c.String(),
                         Zone = c.String(),
                         Description = c.String(),
-                        ShortDescription = c.String(),
-                        Elevation = c.String(),
-                        Miles = c.Single(),
+                        TotalMiles = c.Single(),
+                        Status = c.String(),
                         Agency = c.String(),
                         InfoHTMLLink = c.String(),
+                        Elevation = c.String(),
+                        ShortDescription = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Points",
+                "dbo.Posts",
                 c => new
                     {
-                        Latitude = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Longitude = c.Decimal(nullable: false, precision: 18, scale: 2),
-                        Elevation = c.Int(nullable: false),
-                        Trail_Id = c.String(maxLength: 128),
+                        Id = c.String(nullable: false, maxLength: 128),
                     })
-                .PrimaryKey(t => new { t.Latitude, t.Longitude })
-                .ForeignKey("dbo.Trails", t => t.Trail_Id)
-                .Index(t => t.Trail_Id);
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.TrailSections",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        ShortDescription = c.String(),
+                        Geography = c.Geography(),
+                        Status = c.String(),
+                        TrailID = c.String(maxLength: 128),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Trails", t => t.TrailID)
+                .Index(t => t.TrailID);
             
             CreateTable(
                 "dbo.AspNetRoles",
@@ -118,6 +128,19 @@ namespace MyTrails.Migrations
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
+            CreateTable(
+                "dbo.PostTrails",
+                c => new
+                    {
+                        Post_Id = c.String(nullable: false, maxLength: 128),
+                        Trail_Id = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.Post_Id, t.Trail_Id })
+                .ForeignKey("dbo.Posts", t => t.Post_Id, cascadeDelete: true)
+                .ForeignKey("dbo.Trails", t => t.Trail_Id, cascadeDelete: true)
+                .Index(t => t.Post_Id)
+                .Index(t => t.Trail_Id);
+            
         }
         
         public override void Down()
@@ -126,22 +149,28 @@ namespace MyTrails.Migrations
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.Points", "Trail_Id", "dbo.Trails");
-            DropForeignKey("dbo.Conditions", "TrailId_Id", "dbo.Trails");
+            DropForeignKey("dbo.TrailSections", "TrailID", "dbo.Trails");
+            DropForeignKey("dbo.PostTrails", "Trail_Id", "dbo.Trails");
+            DropForeignKey("dbo.PostTrails", "Post_Id", "dbo.Posts");
+            DropForeignKey("dbo.Conditions", "TrailId", "dbo.Trails");
+            DropIndex("dbo.PostTrails", new[] { "Trail_Id" });
+            DropIndex("dbo.PostTrails", new[] { "Post_Id" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
             DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
             DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.Points", new[] { "Trail_Id" });
-            DropIndex("dbo.Conditions", new[] { "TrailId_Id" });
+            DropIndex("dbo.TrailSections", new[] { "TrailID" });
+            DropIndex("dbo.Conditions", new[] { "TrailId" });
+            DropTable("dbo.PostTrails");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetRoles");
-            DropTable("dbo.Points");
+            DropTable("dbo.TrailSections");
+            DropTable("dbo.Posts");
             DropTable("dbo.Trails");
             DropTable("dbo.Conditions");
         }
