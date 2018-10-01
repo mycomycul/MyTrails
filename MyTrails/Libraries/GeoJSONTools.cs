@@ -62,7 +62,7 @@ namespace MyTrails.Libraries
             IList<TrailSection> otherTrails = new List<TrailSection>();
             //ICollection<TrailSection> Points = new List<TrailSection>();
 
-            JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json")) as JObject;
+            JObject t = JObject.Parse(File.ReadAllText(@"~/App_Data/OlympicTrailData.Json")) as JObject;
             dynamic traildata = t;
             var wkid = traildata.spatialReference.wkid;
 
@@ -78,7 +78,6 @@ namespace MyTrails.Libraries
                 }
                 geometryString = geometryString.Remove(geometryString.Length - 1);
                 geometryString += ")";
-
 
                 ts.Id = trail.attributes.FEATUREID;
                 ts.ShortDescription = trail.attributes.TRLNAME;
@@ -102,12 +101,12 @@ namespace MyTrails.Libraries
 
 
 
-                
-
                 // Console.Read();
             }
 
-            var b = "";
+
+            db.SaveChanges();
+
         }
         public static string GeometryType(int pointcount)
         {

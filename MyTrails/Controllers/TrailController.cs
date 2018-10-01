@@ -1,17 +1,17 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using MyTrails.Libraries;
+using MyTrails.Models;
+using MyTrails.ViewModels;
+using Newtonsoft.Json.Linq;
+using ScrapySharp.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using MyTrails.Models;
-using MyTrails.Libraries;
-using HtmlAgilityPack;
-using ScrapySharp.Extensions;
-using System.IO;
-using System.Web.Script.Serialization;
+
 
 namespace MyTrails.Controllers
 {
@@ -23,6 +23,32 @@ namespace MyTrails.Controllers
         public ActionResult Index()
         {
             return View(db.Trails.ToList());
+        }
+        public ActionResult Combine()
+        {
+            JObject t = JObject.Parse(System.IO.File.ReadAllText(Server.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject;
+            dynamic traildata = t;
+            var features = traildata.features;
+            List<string> trailNames = new List<string>();
+            var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
+            for (int i = 0; i < features.Count; i++)
+            {
+                string tu = features[i].attributes.TRLNAME.Value;
+                if (!db.Trails.Any(x => x.TrailName == tu))
+                {
+                    trailNames.Add(features[i].attributes.TRLNAME.Value);
+                }
+            }
+
+
+            CombineViewModel vm = new CombineViewModel()
+            {
+                Trails = Trails,
+                TrailSections = trailNames.Distinct().OrderBy(x => x).ToList()
+            };
+
+
+            return View(vm);
         }
 
         // GET: Trail/Details/5

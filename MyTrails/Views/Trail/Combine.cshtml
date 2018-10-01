@@ -1,0 +1,53 @@
+﻿@model MyTrails.ViewModels.CombineViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div style="overflow:auto;height:500px;width:250px;">
+            <ul class="list-group">
+
+                @foreach (var item in Model.Trails)
+                {
+                    <li class="list-group-item trail">  @Html.DisplayFor(modelItem => item.TrailName)</li>
+
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-6">
+
+        <div style="overflow:auto;height:500px;width:250px;">
+            <ul class="list-group">
+
+                @foreach (var item in Model.TrailSections)
+                {
+                    <li class="list-group-item li">@item</li>
+
+                }
+            </ul>
+        </div>
+    </div>
+
+</div>
+    <script>
+        $('.trail').on("click", function (event) {
+            $('.trail').removeClass("selected-list-item");
+            $(this).addClass("selected-list-item");
+        })
+        $('.li').on("click", function (event) {
+            $(this).toggleClass("selected-list-item");
+        })
+    </script>
+<script>
+
+</script>
+

@@ -230,6 +230,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\CombineViewModel.cs" />
     <Compile Include="ViewModels\TrailConditions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +246,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="MapData\OlympicTrailData.json" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="App_Data\OlympicTrailData.json" />
+    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.3.1.js" />
+    <Content Include="Scripts\jquery-3.3.1.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
+    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
+    <Content Include="Scripts\jquery-3.3.1.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
@@ -311,16 +317,14 @@
     <Content Include="Views\Trail\Delete.cshtml" />
     <Content Include="Views\Trail\Details.cshtml" />
     <Content Include="Views\Trail\Edit.cshtml" />
-    <Content Include="Views\Trail\Index.cshtml" />
     <Content Include="Views\Condition\Create.cshtml" />
     <Content Include="Views\Condition\Delete.cshtml" />
     <Content Include="Views\Condition\Details.cshtml" />
     <Content Include="Views\Condition\Edit.cshtml" />
     <Content Include="Views\Condition\Index.cshtml" />
+    <Content Include="Views\Trail\Combine.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>
@@ -334,7 +338,6 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201808250225304_InitialCreate.resx">
