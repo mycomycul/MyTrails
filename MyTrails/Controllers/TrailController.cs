@@ -17,17 +17,28 @@ namespace MyTrails.Controllers
 {
     public class TrailController : Controller
     {
+        public JObject t { get; set; }
+        public TrailController()
+        {
+            
+        t = JObject.Parse(System.IO.File.ReadAllText(Server.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject;
+        }
         private ApplicationDbContext db = new ApplicationDbContext();
+
+
+
 
         // GET: Trail
         public ActionResult Index()
         {
             return View(db.Trails.ToList());
         }
+
+        [HttpGet]
         public ActionResult Combine()
         {
-            JObject t = JObject.Parse(System.IO.File.ReadAllText(Server.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject;
             dynamic traildata = t;
+
             var features = traildata.features;
             List<string> trailNames = new List<string>();
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
@@ -39,7 +50,7 @@ namespace MyTrails.Controllers
                     trailNames.Add(features[i].attributes.TRLNAME.Value);
                 }
             }
-
+            
 
             CombineViewModel vm = new CombineViewModel()
             {
@@ -49,6 +60,26 @@ namespace MyTrails.Controllers
 
 
             return View(vm);
+        }
+
+        [HttpPost]
+        public JsonResult Combine(string trail, string[] trailsections)
+        {
+
+            try {
+                foreach (var section in trailsections)
+                {
+
+                }
+
+
+
+
+                return Json(true); }
+            catch (Exception e)
+            {
+                return Json(false);
+            }
         }
 
         // GET: Trail/Details/5

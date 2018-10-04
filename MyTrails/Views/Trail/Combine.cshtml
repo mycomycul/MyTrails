@@ -4,6 +4,8 @@
     ViewBag.Title = "Index";
 }
 
+@Scripts.Render("~/bundles/trailcombine")
+
 <h2>Index</h2>
 
 <p>
@@ -36,18 +38,9 @@
             </ul>
         </div>
     </div>
+    <button id="combineclick" onclick="submitCombine()" value="click to combine"></button>
+
 
 </div>
-    <script>
-        $('.trail').on("click", function (event) {
-            $('.trail').removeClass("selected-list-item");
-            $(this).addClass("selected-list-item");
-        })
-        $('.li').on("click", function (event) {
-            $(this).toggleClass("selected-list-item");
-        })
-    </script>
-<script>
 
-</script>
 

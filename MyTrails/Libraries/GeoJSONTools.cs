@@ -68,23 +68,13 @@ namespace MyTrails.Libraries
 
             foreach (dynamic trail in traildata.features)
             {
-                string LineType = GeometryType(trail.geometry.paths[0].Count);
-                //Check if this should be a point or line
-                TrailSection ts = new TrailSection();
-                string geometryString = LineType + " (";
-                foreach (dynamic point in trail.geometry.paths[0])
-                {
-                    geometryString += (string)point[0] + " " + (string)point[1] + ",";
-                }
-                geometryString = geometryString.Remove(geometryString.Length - 1);
-                geometryString += ")";
-
-                ts.Id = trail.attributes.FEATUREID;
-                ts.ShortDescription = trail.attributes.TRLNAME;
-                ts.Geography = DbGeography.FromText(geometryString, (int)wkid);
-                ts.Status = trail.attributes.TRLSTATUS;
-
                 string trailName = trail.attributes.TRLNAME;
+                
+                
+                
+
+
+                //Check if a matching trail name in the database exists and if so add current trail section to trail
                 if (db.Trails.Where(x => x.TrailName.ToUpper() == trailName).Any())
                 {
                     var currentTrail = db.Trails.Where(x => x.TrailName.ToUpper() == trailName).First();
@@ -108,6 +98,29 @@ namespace MyTrails.Libraries
             db.SaveChanges();
 
         }
+
+        public TrailSection CreateTrailSection(string trailname, dynamic trail, string wkid)
+        {
+            string LineType = GeometryType(trail.geometry.paths[0].Count);
+            //Check if this should be a point or line
+            TrailSection ts = new TrailSection();
+            //Create geometry string for creating GEOSpatial geography in SQL Server
+            string geometryString = LineType + " (";
+            foreach (dynamic point in trail.geometry.paths[0])
+            {
+                geometryString += (string)point[0] + " " + (string)point[1] + ",";
+            }
+            geometryString = geometryString.Remove(geometryString.Length - 1);
+            geometryString += ")";
+
+            //Build new trial section
+            ts.Id = trail.attributes.FEATUREID;
+            ts.ShortDescription = trail.attributes.TRLNAME;
+            ts.Geography = DbGeography.FromText(geometryString, Convert.ToInt32(wkid));
+            ts.Status = trail.attributes.TRLSTATUS;
+            return ts;
+        }
+
         public static string GeometryType(int pointcount)
         {
             if (pointcount > 1)
