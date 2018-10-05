@@ -14,8 +14,9 @@
 
 <div class="row">
     <div class="col-sm-6">
+        <label for="Trails">Trails in Database</label>
         <div style="overflow:auto;height:500px;width:250px;">
-            <ul class="list-group">
+            <ul class="list-group" id="Trails">
 
                 @foreach (var item in Model.Trails)
                 {
@@ -26,9 +27,9 @@
         </div>
     </div>
     <div class="col-sm-6">
-
+        <label for="GeoData">Trails in GeoData File</label>
         <div style="overflow:auto;height:500px;width:250px;">
-            <ul class="list-group">
+            <ul class="list-group" id="GeoData">
 
                 @foreach (var item in Model.TrailSections)
                 {
@@ -38,7 +39,7 @@
             </ul>
         </div>
     </div>
-    <button id="combineclick" onclick="submitCombine()" value="click to combine"></button>
+    <button id="combineclick" onclick="submitCombine()" value="click to combine">Save geodata to trail</button>
 
 
 </div>
