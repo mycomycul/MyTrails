@@ -65,14 +65,10 @@ namespace MyTrails.Libraries
             JObject t = JObject.Parse(File.ReadAllText(@"~/App_Data/OlympicTrailData.Json")) as JObject;
             dynamic traildata = t;
             var wkid = traildata.spatialReference.wkid;
-
             foreach (dynamic trail in traildata.features)
             {
                 string trailName = trail.attributes.TRLNAME;
-                
-                
-                
-
+                var ts = CreateTrailSection(trailName, trail, wkid);
 
                 //Check if a matching trail name in the database exists and if so add current trail section to trail
                 if (db.Trails.Where(x => x.TrailName.ToUpper() == trailName).Any())
@@ -89,12 +85,8 @@ namespace MyTrails.Libraries
                     otherTrails.Add(ts);
                 }
 
-
-
                 // Console.Read();
             }
-
-
             db.SaveChanges();
 
         }

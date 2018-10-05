@@ -17,14 +17,9 @@ namespace MyTrails.Controllers
 {
     public class TrailController : Controller
     {
-        public JObject t { get; set; }
-        public TrailController()
-        {
-            
-        t = JObject.Parse(System.IO.File.ReadAllText(Server.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject;
-        }
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        private JObject t = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
 
 
@@ -37,8 +32,8 @@ namespace MyTrails.Controllers
         [HttpGet]
         public ActionResult Combine()
         {
-            dynamic traildata = t;
 
+        dynamic traildata = t;
             var features = traildata.features;
             List<string> trailNames = new List<string>();
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
@@ -50,7 +45,9 @@ namespace MyTrails.Controllers
                     trailNames.Add(features[i].attributes.TRLNAME.Value);
                 }
             }
-            
+
+
+
 
             CombineViewModel vm = new CombineViewModel()
             {
@@ -65,17 +62,22 @@ namespace MyTrails.Controllers
         [HttpPost]
         public JsonResult Combine(string trail, string[] trailsections)
         {
+            dynamic features = t["features"];
 
-            try {
+            try
+            {
                 foreach (var section in trailsections)
                 {
-
+                    var bob = from s in features as IEnumerable<dynamic>
+                              where s.attributes.TRLNAME == section
+                              select s.attributes.OBJECTID;
                 }
 
 
 
 
-                return Json(true); }
+                return Json(true);
+            }
             catch (Exception e)
             {
                 return Json(false);
