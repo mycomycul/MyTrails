@@ -33,7 +33,7 @@ namespace MyTrails.Controllers
         public ActionResult Combine()
         {
 
-        dynamic traildata = t;
+            dynamic traildata = t;
             var features = traildata.features;
             List<string> trailNames = new List<string>();
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
@@ -60,28 +60,40 @@ namespace MyTrails.Controllers
         }
 
         [HttpPost]
-        public JsonResult Combine(string trail, string[] trailsections)
+        public ActionResult Combine(string trailNameInDB, string[] trailSectionNames) {
+
+            return new EmptyResult();
+
+        }
+        [HttpGet]
+        public JArray GetGeoJsonData(string trailSectionName)
         {
             dynamic features = t["features"];
-
             try
             {
-                foreach (var section in trailsections)
+                var trailSections = from s in features as IEnumerable<dynamic>
+                                    where s.attributes.TRLNAME == trailSectionName
+                                    select s.geometry;
+
+                JArray trailPaths = new JArray();
+                foreach (var section in trailSections)
                 {
-                    var bob = from s in features as IEnumerable<dynamic>
-                              where s.attributes.TRLNAME == section
-                              select s.attributes.OBJECTID;
+                    trailPaths.Merge(section.paths);
                 }
-
-
-
-
-                return Json(true);
+                return trailPaths;
             }
             catch (Exception e)
             {
-                return Json(false);
+                return new JArray();
             }
+        }
+
+        [HttpGet]
+        public JsonResult GetTrailData(string trailName)
+        {
+
+
+            return Json(true);
         }
 
         // GET: Trail/Details/5

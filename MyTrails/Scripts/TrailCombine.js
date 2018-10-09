@@ -1,25 +1,55 @@
 ﻿$(function () {
-    $('.trail').on("click", function (event) {
-        $('.trail').removeClass("selected-list-item");
-        $(this).addClass("selected-list-item");
-    })
-    $('.li').on("click", function (event) {
-        $(this).toggleClass("selected-list-item");
-    })
-});
+    //$('.trail').on("click", function (event) {
+    //    $('.trail').removeClass("selected-list-item");
+    //    $(this).addClass("selected-list-item");
+    //});
+    //$('.section').on("click", function (event) {
+    //    $(this).toggleClass("selected-list-item");
+    //});
 
+
+$('.section').each(function () {
+    var $thisSection = $(this);
+    var selected = false;
+    $thisSection.click(function () {
+        if (selected === false) {
+            selected = true;
+            $thisSection.addClass("selected-list-item");
+            getGeoJsonData($thisSection.text());
+        }
+        else {
+            selected = false;
+            $thisSection.removeClass("selected-list-item");
+        }
+    });
+});
+});
+//Get Trail Section Coordinates
+function getGeoJsonData(geoDataTrailName) {
+    var data = {
+        trailSectionName: geoDataTrailName
+    };
+    $.ajax({
+        url: "GetGeoJsonData",
+        data: data,
+        success: function (result) {
+            addDataToMap(result);  //Not implemented
+        }
+    });
+    return true;
+}
+//Submit selected trail from geodata and selected trails from GEOJson Data
 function submitCombine() {
-    var trailsections = $("li.li.selected-list-item").map(function () {
+    var trailsections = $("section.section.selected-list-item").map(function () {
         return $(this).text();
     }).get();
     var trail = $('li.trail.selected-list-item').text();
     var data = {
-        trail: trail,
-        trailsections: trailsections
+        trailsections: trailsections,
+        trail: trail
     };
 
-
-    $.post({
+    $.ajax({
         url: "Combine",
         data: data,
         success: function (result) {
@@ -27,4 +57,9 @@ function submitCombine() {
         }
     });
     return true;
+};
+
+//Display data to map
+function addDataToMap(coordinates){
+    alert(coordinates);
 }
