@@ -50,7 +50,7 @@ function submitCombine() {
     };
 
     $.ajax({
-        url: "Combine",
+        url: "CombineGeoJsonWithDb",
         data: data,
         success: function (result) {
             alert(result);

@@ -2,6 +2,7 @@
 using MyTrails.Libraries;
 using MyTrails.Models;
 using MyTrails.ViewModels;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ScrapySharp.Extensions;
 using System;
@@ -11,7 +12,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-
+using System.Web.Script.Serialization;
 
 namespace MyTrails.Controllers
 {
@@ -19,7 +20,7 @@ namespace MyTrails.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        private JObject t = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
+        private JObject jsonData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
 
 
@@ -32,8 +33,7 @@ namespace MyTrails.Controllers
         [HttpGet]
         public ActionResult Combine()
         {
-
-            dynamic traildata = t;
+            dynamic traildata = jsonData;
             var features = traildata.features;
             List<string> trailNames = new List<string>();
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
@@ -46,9 +46,6 @@ namespace MyTrails.Controllers
                 }
             }
 
-
-
-
             CombineViewModel vm = new CombineViewModel()
             {
                 Trails = Trails,
@@ -60,33 +57,84 @@ namespace MyTrails.Controllers
         }
 
         [HttpPost]
-        public ActionResult Combine(string trailNameInDB, string[] trailSectionNames) {
+        public ActionResult CombineGeoJsonWithDb(string trailNameInDB, string[] trailSectionNames) {
 
             return new EmptyResult();
 
         }
+
+
         [HttpGet]
-        public JArray GetGeoJsonData(string trailSectionName)
+        public string GetGeoJsonData(string trailSectionName)
         {
-            dynamic features = t["features"];
+            dynamic features = jsonData["features"];
             try
             {
-                var trailSections = from s in features as IEnumerable<dynamic>
+                var trailSections = (from s in features as IEnumerable<dynamic>
                                     where s.attributes.TRLNAME == trailSectionName
-                                    select s.geometry;
+                                    select new { geometry = s.geometry, NOTES = s.attributes.NOTES }).ToList();
 
-                JArray trailPaths = new JArray();
+                combineInfo trailPaths = new combineInfo();
+                JArray geometry = new JArray();
+                List<string> Notes = new List<string>();
                 foreach (var section in trailSections)
                 {
-                    trailPaths.Merge(section.paths);
+                    JArray r = section.geometry.paths;
+                    geometry.Merge(r);
+                    trailPaths.Notes.Add(section.NOTES.ToString());
                 }
-                return trailPaths;
+
+                trailPaths.geometry = JsonConvert.SerializeObject(geometry);
+                //var t = newArray.ToObject
+
+                return (JsonConvert.SerializeObject(trailPaths));
             }
             catch (Exception e)
             {
-                return new JArray();
+                return (e.Message);
             }
         }
+
+        public class geometry
+        {
+
+        }
+
+        public class combineInfo
+        {
+            public string geometry { get; set; }
+            public List<string> Notes { get; set; }
+
+
+            public combineInfo()
+            {
+                Notes = new List<string>();
+          
+            }
+
+        }
+        //[HttpGet]
+        //public JArray GetGeoJsonData(string trailSectionName)
+        //{
+        //    dynamic features = t["features"];
+        //    try
+        //    {
+        //        var trailSections = from s in features as IEnumerable<dynamic>
+        //                            where s.attributes.TRLNAME == trailSectionName
+        //                            select s.geometry;
+
+        //        JArray trailPaths = new JArray();
+        //        foreach (var section in trailSections)
+        //        {
+        //            trailPaths.Merge(section.paths);
+        //        }
+        //        return trailPaths;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return new JArray();
+        //    }
+        //}
 
         [HttpGet]
         public JsonResult GetTrailData(string trailName)
