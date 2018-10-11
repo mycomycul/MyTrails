@@ -4,23 +4,22 @@
     ViewBag.Title = "Index";
 }
 
-@Scripts.Render("~/bundles/trailcombine")
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 
+
+<div>
+    Select a trail in the database and any trail names from the GeoData that match to combine their data
+</div>
 <div class="row">
     <div class="col-sm-6">
         <label for="Trails">Trails in Database</label>
-        <div style="overflow:auto;height:500px;width:250px;">
+        <div style="overflow:auto;height:500px;">
             <ul class="list-group" id="Trails">
 
                 @foreach (var item in Model.Trails)
                 {
-                    <li class="list-group-item trail">  @Html.DisplayFor(modelItem => item.TrailName)</li>
+                    <li class="list-group-item trail">  @Html.DisplayFor(modelItem => item)</li>
 
                 }
             </ul>
@@ -28,7 +27,7 @@
     </div>
     <div class="col-sm-6">
         <label for="GeoData">Trails in GeoData File</label>
-        <div style="overflow:auto;height:500px;width:250px;">
+        <div style="overflow:auto;height:500px;">
             <ul class="list-group" id="GeoData">
 
                 @foreach (var item in Model.TrailSections)
@@ -39,9 +38,14 @@
             </ul>
         </div>
     </div>
+
     <button id="combineclick" onclick="submitCombine()" value="click to combine">Save geodata to trail</button>
 
 
 </div>
+<div id="map" class="map"></div>
 
 
+
+<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>
+@Scripts.Render("~/bundles/trailcombine")

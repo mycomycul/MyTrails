@@ -26,3 +26,9 @@ textarea {
 .selected-list-item{
     background-color: #AAAAAA;
 }
+
+/*trailcombine page*/
+.map{
+    height: 400px;
+    width: 100%;
+}

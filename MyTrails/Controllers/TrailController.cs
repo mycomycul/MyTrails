@@ -35,8 +35,10 @@ namespace MyTrails.Controllers
         {
             dynamic traildata = jsonData;
             var features = traildata.features;
+            //
             List<string> trailNames = new List<string>();
-            var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).ToList();
+
+            var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
             for (int i = 0; i < features.Count; i++)
             {
                 string tu = features[i].attributes.TRLNAME.Value;
@@ -56,35 +58,46 @@ namespace MyTrails.Controllers
             return View(vm);
         }
 
+        public ActionResult Map()
+        {
+            return View();
+        }
+
         [HttpPost]
-        public ActionResult CombineGeoJsonWithDb(string trailNameInDB, string[] trailSectionNames) {
+        public ActionResult CombineGeoJsonWithDb(string trailNameInDB, string[] trailSectionNames)
+        {
 
             return new EmptyResult();
 
         }
 
-
+        /// <summary>
+        /// Extracts geometry and notes for all trail sections in the GeoJson data that 
+        /// has the same name returns it as Json
+        /// </summary>
+        /// <param name="trailSectionName"></param>
+        /// <returns></returns>
         [HttpGet]
         public string GetGeoJsonData(string trailSectionName)
         {
             dynamic features = jsonData["features"];
             try
             {
-                var trailSections = (from s in features as IEnumerable<dynamic>
-                                    where s.attributes.TRLNAME == trailSectionName
-                                    select new { geometry = s.geometry, NOTES = s.attributes.NOTES }).ToList();
 
-                combineInfo trailPaths = new combineInfo();
-                JArray geometry = new JArray();
-                List<string> Notes = new List<string>();
+                //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
+                var trailSections = (from s in features as IEnumerable<dynamic>
+                                     where s.attributes.TRLNAME == trailSectionName
+                                     select new { geometry = s.geometry, NOTES = s.attributes.NOTES }).ToList();
+
+                //Create  to store notes and geometry to convert to json
+                geometryAndNotes trailPaths = new geometryAndNotes();
+                JArray trailGeometry = new JArray();
                 foreach (var section in trailSections)
                 {
-                    JArray r = section.geometry.paths;
-                    geometry.Merge(r);
+                    trailGeometry.Merge(section.geometry.paths);
                     trailPaths.Notes.Add(section.NOTES.ToString());
                 }
-
-                trailPaths.geometry = JsonConvert.SerializeObject(geometry);
+                trailPaths.geometry = JsonConvert.SerializeObject(trailGeometry);
                 //var t = newArray.ToObject
 
                 return (JsonConvert.SerializeObject(trailPaths));
@@ -100,16 +113,15 @@ namespace MyTrails.Controllers
 
         }
 
-        public class combineInfo
+        public class geometryAndNotes
         {
             public string geometry { get; set; }
             public List<string> Notes { get; set; }
 
 
-            public combineInfo()
+            public geometryAndNotes()
             {
                 Notes = new List<string>();
-          
             }
 
         }

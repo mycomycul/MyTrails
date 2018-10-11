@@ -8,7 +8,7 @@ namespace MyTrails.ViewModels
 {
     public class CombineViewModel
     {
-        public List<Trail> Trails { get; set; }
+        public List<string> Trails { get; set; }
         public List<string> TrailSections { get; set; }
     }
 }

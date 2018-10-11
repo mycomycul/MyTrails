@@ -8,21 +8,21 @@
     //});
 
 
-$('.section').each(function () {
-    var $thisSection = $(this);
-    var selected = false;
-    $thisSection.click(function () {
-        if (selected === false) {
-            selected = true;
-            $thisSection.addClass("selected-list-item");
-            getGeoJsonData($thisSection.text());
-        }
-        else {
-            selected = false;
-            $thisSection.removeClass("selected-list-item");
-        }
+    $('.section').each(function () {
+        var $thisSection = $(this);
+        var selected = false;
+        $thisSection.click(function () {
+            if (selected === false) {
+                selected = true;
+                $thisSection.addClass("selected-list-item");
+                getGeoJsonData($thisSection.text());
+            }
+            else {
+                selected = false;
+                $thisSection.removeClass("selected-list-item");
+            }
+        });
     });
-});
 });
 //Get Trail Section Coordinates
 function getGeoJsonData(geoDataTrailName) {
@@ -38,7 +38,7 @@ function getGeoJsonData(geoDataTrailName) {
     });
     return true;
 }
-//Submit selected trail from geodata and selected trails from GEOJson Data
+//Submit selected trail from geodata and selected trails from GEOJson Data to be combined and saved in the the database
 function submitCombine() {
     var trailsections = $("section.section.selected-list-item").map(function () {
         return $(this).text();
@@ -60,6 +60,19 @@ function submitCombine() {
 };
 
 //Display data to map
-function addDataToMap(coordinates){
+function addDataToMap(coordinates) {
     alert(coordinates);
 }
+
+var map = new ol.Map({
+    target: 'map',
+    layers: [
+        new ol.layer.Tile({
+            source: new ol.source.OSM()
+        })
+    ],
+    view: new ol.View({
+        center: ol.proj.fromLonLat([-123.5, 47.85]),
+        zoom: 9
+    })
+});
