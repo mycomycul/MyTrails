@@ -1,8 +1,8 @@
 ﻿$(function () {
-    //$('.trail').on("click", function (event) {
-    //    $('.trail').removeClass("selected-list-item");
-    //    $(this).addClass("selected-list-item");
-    //});
+    $('.trail').on("click", function (event) {
+        $('.trail').removeClass("selected-list-item");
+        $(this).addClass("selected-list-item");
+    });
     //$('.section').on("click", function (event) {
     //    $(this).toggleClass("selected-list-item");
     //});
@@ -32,8 +32,11 @@ function getGeoJsonData(geoDataTrailName) {
     $.ajax({
         url: "GetGeoJsonData",
         data: data,
+        dataType: 'json',
         success: function (result) {
-            addDataToMap(result);  //Not implemented
+            for (var k = 0; k < result.length; k++) {
+                CreateGoogleDataFromArray(result[k].geometry);
+            }
         }
     });
     return true;
@@ -59,20 +62,77 @@ function submitCombine() {
     return true;
 };
 
-//Display data to map
-function addDataToMap(coordinates) {
-    alert(coordinates);
+
+///////////////////////
+/* MAPPING FUNCTIONS */
+///////////////////////
+
+
+var map; //variable so that we can target the map when adding/removing markersa
+var mapPoints = [];
+
+function addDataToMap(googleCoordinates) {
+
+    //If data for a line was received create a Google Polyline
+    let mapFeature;
+    if (googleCoordinates.length > 1) {
+        mapFeature = new google.maps.Polyline({
+            path: googleCoordinates,
+            strokeColor: "#00ff00",
+            strokeOpacity: 0.8,
+            strokeWeight: 8
+        });
+
+    }
+    //Else if only one coordinate was received, create a Google marker
+    else {
+        mapFeature = new google.maps.Marker({
+            position: coordinates,
+            icon: {
+                scaledSize: new google.maps.Size(50, 50)
+            },
+            animation: google.maps.Animation.BOUNCE
+        });
+    }
+
+    mapFeature.setMap(map);
+
 }
 
-var map = new ol.Map({
-    target: 'map',
-    layers: [
-        new ol.layer.Tile({
-            source: new ol.source.OSM()
-        })
-    ],
-    view: new ol.View({
-        center: ol.proj.fromLonLat([-123.5, 47.85]),
-        zoom: 9
-    })
-});
+
+function myMap() {
+    //Map target, zoom and center required            
+    var mapCanvas = document.getElementById('map');
+    var mapCenter = { lat: 47.7, lng: -123.63 };
+    var mapZoom = 8;
+    var mapType = 'terrain';
+    var mapOptions = { center: mapCenter, zoom: mapZoom, mapTypeId: mapType };
+    map = new google.maps.Map(mapCanvas, mapOptions);
+
+
+
+};
+
+//Receives coordinate array (lon,lat), parses to google map point array and to be added to the map
+//
+function CreateGoogleDataFromArray(coordinates) {
+    let newFeature = [];
+    for (var p = 0; p < coordinates.length; p++) {
+        newFeature.push(new google.maps.LatLng(coordinates[p][1], coordinates[p][0]));
+    }
+    addDataToMap(newFeature);
+}
+
+function CreateMarker(map, mapCenter) {
+    var marker = new google.maps.Marker({
+        position: mapCenter,
+        icon: {
+            url: "mapfiles/smileyFace1.png",
+            scaledSize: new google.maps.Size(50, 50),
+        },
+        animation: google.maps.Animation.BOUNCE,
+        title: 'Click to Zoom'
+
+    });
+    marker.setMap(map);
+}

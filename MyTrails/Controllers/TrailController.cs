@@ -87,20 +87,9 @@ namespace MyTrails.Controllers
                 //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
                 var trailSections = (from s in features as IEnumerable<dynamic>
                                      where s.attributes.TRLNAME == trailSectionName
-                                     select new { geometry = s.geometry, NOTES = s.attributes.NOTES }).ToList();
-
-                //Create  to store notes and geometry to convert to json
-                geometryAndNotes trailPaths = new geometryAndNotes();
-                JArray trailGeometry = new JArray();
-                foreach (var section in trailSections)
-                {
-                    trailGeometry.Merge(section.geometry.paths);
-                    trailPaths.Notes.Add(section.NOTES.ToString());
-                }
-                trailPaths.geometry = JsonConvert.SerializeObject(trailGeometry);
-                //var t = newArray.ToObject
-
-                return (JsonConvert.SerializeObject(trailPaths));
+                                     select new { geometry = s.geometry.paths[0], NOTES = s.attributes.NOTES }).ToList();
+                var ser = JsonConvert.SerializeObject(trailSections);
+                return (JsonConvert.SerializeObject(trailSections));
             }
             catch (Exception e)
             {
@@ -108,23 +97,7 @@ namespace MyTrails.Controllers
             }
         }
 
-        public class geometry
-        {
 
-        }
-
-        public class geometryAndNotes
-        {
-            public string geometry { get; set; }
-            public List<string> Notes { get; set; }
-
-
-            public geometryAndNotes()
-            {
-                Notes = new List<string>();
-            }
-
-        }
         //[HttpGet]
         //public JArray GetGeoJsonData(string trailSectionName)
         //{

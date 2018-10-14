@@ -14,7 +14,7 @@
 <div class="row">
     <div class="col-sm-6">
         <label for="Trails">Trails in Database</label>
-        <div style="overflow:auto;height:500px;">
+        <div style="overflow:auto;height:300px;">
             <ul class="list-group" id="Trails">
 
                 @foreach (var item in Model.Trails)
@@ -27,7 +27,7 @@
     </div>
     <div class="col-sm-6">
         <label for="GeoData">Trails in GeoData File</label>
-        <div style="overflow:auto;height:500px;">
+        <div style="overflow:auto;height:300px;">
             <ul class="list-group" id="GeoData">
 
                 @foreach (var item in Model.TrailSections)
@@ -46,6 +46,14 @@
 <div id="map" class="map"></div>
 
 
+<script src="~/Credentials/Credentials.js"></script>
+<script>
+(function(d){
+    var file = 'https://maps.googleapis.com/maps/api/js?key='+ googlekey +'&callback=myMap';
+    var ref = d.getElementsByTagName('script')[0];
+    var js = d.createElement('script');
+    js.src = file;
+    ref.parentNode.insertBefore(js, ref);
+}(document));</script>
 
-<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>
 @Scripts.Render("~/bundles/trailcombine")
