@@ -1,7 +1,7 @@
 ﻿@model MyTrails.ViewModels.CombineViewModel
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Manaul data joiner";
 }
 
 
@@ -32,7 +32,7 @@
 
                 @foreach (var item in Model.TrailSections)
                 {
-                    <li class="list-group-item section">@item</li>
+                    <li class="list-group-item section" data-marker="[]">@item</li>
 
                 }
             </ul>
