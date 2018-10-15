@@ -15,7 +15,10 @@
             if (selected === false) {
                 selected = true;
                 $thisSection.addClass("selected-list-item");
-                getGeoJsonData($thisSection);
+                if ($thisSection.data("marker").length === 0)
+                    getGeoJsonData($thisSection);
+                else
+                    displaySection($thisSection);
             }
             else {
                 selected = false;
@@ -38,12 +41,14 @@ function getGeoJsonData(geoDataTrail) {
         success: function (result) {
             if (result.length > 0) {
                 for (var k = 0; k < result.length; k++) {
-                    let newFeature = CreateGoogleDataFromArray(result[k].Geometry[0]);
-                    let mapFeature = addDataToMap(newFeature, result[k].Notes);
+                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry[0]);
+                    let mapFeature = createMapFeature(latLng, result[k].Notes);
                     mapPoints.push(mapFeature);
+                    //Attach data to data attribute marker array
                     let featureNumbers = geoDataTrail.data("marker");
                     featureNumbers.push(mapPoints.length - 1);
-                    geoDataTrail.data("marker",featureNumbers);
+                    geoDataTrail.data("marker", featureNumbers);
+                    displaySection(geoDataTrail);
                 }
             }
             else {
@@ -58,6 +63,14 @@ function removeSection(sectionToRemove) {
     let sections = sectionToRemove.data("marker");
     for (var i = 0; i < sections.length; i++) {
         mapPoints[sections[i]].setMap(null);
+    }
+}
+
+
+function displaySection($thisSection) {
+    var markers = $thisSection.data("marker");
+    for (var i = 0; i < markers.length; i++) {
+        mapPoints[markers[i]].setMap(map);
     }
 }
 //Submit selected trail from geodata and selected trails from GEOJson Data to be combined and saved in the the database
@@ -91,7 +104,7 @@ var map; //variable so that we can target the map when adding/removing markersa
 var mapPoints = [];
 var infowindow;
 
-function addDataToMap(googleCoordinates, title) {
+function createMapFeature(googleCoordinates, title) {
 
     //If data for a line was received create a Google Polyline
     var mapFeature;
@@ -149,7 +162,7 @@ function myMap() {
 
 //Receives coordinate array (lon,lat), parses to google map point array and to be added to the map
 //
-function CreateGoogleDataFromArray(coordinates) {
+function CreateGoogleLatLngFromArray(coordinates) {
 
     let newFeature = [];
     for (var p = 0; p < coordinates.length; p++) {
