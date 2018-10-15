@@ -35,7 +35,8 @@ function getGeoJsonData(geoDataTrailName) {
         dataType: 'json',
         success: function (result) {
             for (var k = 0; k < result.length; k++) {
-                CreateGoogleDataFromArray(result[k].geometry);
+                let newFeature = CreateGoogleDataFromArray(result[0].Geometry[0]);
+                addDataToMap(newFeature, result[k].Notes);
             }
         }
     });
@@ -70,34 +71,48 @@ function submitCombine() {
 
 var map; //variable so that we can target the map when adding/removing markersa
 var mapPoints = [];
+var infowindow;
 
-function addDataToMap(googleCoordinates) {
+function addDataToMap(googleCoordinates, title) {
 
     //If data for a line was received create a Google Polyline
-    let mapFeature;
+    var mapFeature;
     if (googleCoordinates.length > 1) {
         mapFeature = new google.maps.Polyline({
             path: googleCoordinates,
             strokeColor: "#00ff00",
             strokeOpacity: 0.8,
-            strokeWeight: 8
+            strokeWeight: 8,
+            title: title
         });
+        mapFeature.addListener('click', function () {
+            map.setZoom(10);
+            var location = mapFeature.getPath();
+            map.setCenter(location.b[0]);
 
+        });
     }
     //Else if only one coordinate was received, create a Google marker
     else {
         mapFeature = new google.maps.Marker({
-            position: coordinates,
+            position: googleCoordinates,
             icon: {
                 scaledSize: new google.maps.Size(50, 50)
             },
-            animation: google.maps.Animation.BOUNCE
+            animation: google.maps.Animation.BOUNCE,
+            title: title
         });
-    }
+        mapFeature.addListener('click', function () {
+            map.setZoom(10);
+            map.setCenter(mapFeature.getPosition());
 
+        });
+    }    
     mapFeature.setMap(map);
 
+    mapPoints.push(mapFeature);
 }
+
 
 
 function myMap() {
@@ -108,7 +123,7 @@ function myMap() {
     var mapType = 'terrain';
     var mapOptions = { center: mapCenter, zoom: mapZoom, mapTypeId: mapType };
     map = new google.maps.Map(mapCanvas, mapOptions);
-
+    infowindow = new google.maps.InfoWindow;
 
 
 };
@@ -116,11 +131,14 @@ function myMap() {
 //Receives coordinate array (lon,lat), parses to google map point array and to be added to the map
 //
 function CreateGoogleDataFromArray(coordinates) {
+
     let newFeature = [];
     for (var p = 0; p < coordinates.length; p++) {
+        //alert(coordinates[p][1].toString() + coordinates[p][0].toString());
         newFeature.push(new google.maps.LatLng(coordinates[p][1], coordinates[p][0]));
-    }
-    addDataToMap(newFeature);
+        }
+
+    return newFeature;
 }
 
 function CreateMarker(map, mapCenter) {

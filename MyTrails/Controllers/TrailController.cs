@@ -20,7 +20,7 @@ namespace MyTrails.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        private JObject jsonData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
+        private readonly JObject jsonData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
 
 
@@ -87,7 +87,7 @@ namespace MyTrails.Controllers
                 //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
                 var trailSections = (from s in features as IEnumerable<dynamic>
                                      where s.attributes.TRLNAME == trailSectionName
-                                     select new { geometry = s.geometry.paths[0], NOTES = s.attributes.NOTES }).ToList();
+                                     select new { Geometry = s.geometry.paths, Notes = s.attributes.NOTES }).ToList();
                 var ser = JsonConvert.SerializeObject(trailSections);
                 return (JsonConvert.SerializeObject(trailSections));
             }
