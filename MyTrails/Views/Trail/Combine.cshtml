@@ -19,7 +19,7 @@
 
                 @foreach (var item in Model.Trails)
                 {
-                    <li class="list-group-item trail">  @Html.DisplayFor(modelItem => item)</li>
+                    <li class="list-group-item single-select">  @Html.DisplayFor(modelItem => item)</li>
 
                 }
             </ul>
@@ -32,7 +32,7 @@
 
                 @foreach (var item in Model.TrailSections)
                 {
-                    <li class="list-group-item section" data-marker="[]">@item</li>
+                    <li class="list-group-item multi-select" data-featurenumbers="[]">@item</li>
 
                 }
             </ul>
