@@ -18,24 +18,27 @@ namespace MyTrails.Controllers
 {
     public class TrailController : Controller
     {
+
         private ApplicationDbContext db = new ApplicationDbContext();
-
-        private readonly JObject jsonData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
-
-
+        
+        private readonly JObject trailData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
         // GET: Trail
         public ActionResult Index()
         {
             return View(db.Trails.ToList());
         }
-
+        /// <summary>
+        /// Select Trails from the database without geospatial data and geospatial data without
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Combine()
         {
-            dynamic traildata = jsonData;
-            var features = traildata.features;
-            //
+            dynamic features = trailData["features"];
+
+            //var features = trailData.features;
+
             List<string> trailNames = new List<string>();
 
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
@@ -64,7 +67,7 @@ namespace MyTrails.Controllers
         }
 
         [HttpPost]
-        public ActionResult CombineGeoJsonWithDb(string trailNameInDB, string[] trailSectionNames)
+        public ActionResult CombineGeoJsonWithDb(string trailNameInDb, string[] trailFeatureNames)
         {
 
             return new EmptyResult();
@@ -80,7 +83,7 @@ namespace MyTrails.Controllers
         [HttpGet]
         public string GetGeoJsonData(string trailSectionName)
         {
-            dynamic features = jsonData["features"];
+            dynamic features = trailData["features"];
             try
             {
 
@@ -98,28 +101,6 @@ namespace MyTrails.Controllers
         }
 
 
-        //[HttpGet]
-        //public JArray GetGeoJsonData(string trailSectionName)
-        //{
-        //    dynamic features = t["features"];
-        //    try
-        //    {
-        //        var trailSections = from s in features as IEnumerable<dynamic>
-        //                            where s.attributes.TRLNAME == trailSectionName
-        //                            select s.geometry;
-
-        //        JArray trailPaths = new JArray();
-        //        foreach (var section in trailSections)
-        //        {
-        //            trailPaths.Merge(section.paths);
-        //        }
-        //        return trailPaths;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new JArray();
-        //    }
-        //}
 
         [HttpGet]
         public JsonResult GetTrailData(string trailName)
@@ -226,8 +207,6 @@ namespace MyTrails.Controllers
 
         public ActionResult ImportOlympicTrails()
         {
-
-
 
             //Setup Browser and download page 
             var baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
