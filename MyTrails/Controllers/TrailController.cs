@@ -198,6 +198,10 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
+        /// <summary>
+        /// Imports trails and conditions to the db from the Olympic Naitonal Park trail conditions 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ImportOlympicTrails()
         {
 
@@ -255,15 +259,11 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
-        public void AddCondition()
-        {
-
-        }
-        
+ 
         public ActionResult ImportJSONtrail()
         {
             GeoJSONTools geoTools = new GeoJSONTools();
-            geoTools.InputGeoJson2();
+            geoTools.ImportGeoJson2();
 
             return new EmptyResult();
         }

@@ -326,6 +326,7 @@
     <Content Include="Views\Condition\Index.cshtml" />
     <Content Include="Views\Trail\Combine.cshtml" />
     <Content Include="Views\Trail\Map.cshtml" />
+    <Content Include="Views\Condition\ImportNewConditions.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

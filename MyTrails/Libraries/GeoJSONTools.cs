@@ -49,18 +49,15 @@ namespace MyTrails.Libraries
             Console.Read();
 
         }
-        public void InputGeoJson2()
-        {
-            ////var t = JsonConvert.DeserializeObject(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            //JObject t = JObject.Parse(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            //dynamic trails = t;
-            //foreach (dynamic trail in trails.features)
-            //{
 
-            //        // Console.Read();
-            //}
+        /// <summary>
+        /// Imports data from a geoJson
+        /// </summary>
+        public void ImportGeoJson2()
+        {
+
             IList<TrailSection> otherTrails = new List<TrailSection>();
-            //ICollection<TrailSection> Points = new List<TrailSection>();
+
 
             JObject t = JObject.Parse(File.ReadAllText(@"~/App_Data/OlympicTrailData.Json")) as JObject;
             dynamic traildata = t;
@@ -91,7 +88,7 @@ namespace MyTrails.Libraries
 
         }
 
-        public TrailSection CreateTrailSection(string trailname, dynamic trail, string wkid)
+        public static TrailSection CreateTrailSection(string trailname, dynamic trail, string wkid)
         {
             string LineType = GeometryType(trail.geometry.paths[0].Count);
             //Check if this should be a point or line

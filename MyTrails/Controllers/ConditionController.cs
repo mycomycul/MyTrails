@@ -6,7 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using HtmlAgilityPack;
+using MyTrails.Libraries;
 using MyTrails.Models;
+using ScrapySharp.Extensions;
 
 namespace MyTrails.Controllers
 {
@@ -19,6 +22,53 @@ namespace MyTrails.Controllers
         {
             var model = db.Conditions.ToList();
             return View(model);
+        }
+
+        public ActionResult ImportNewConditions()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ImportNewConditions(string submit)
+        {
+
+            //Setup Browser and download page 
+            Uri baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
+            HtmlWeb web = new HtmlWeb();
+            var pageResult = web.Load(baseUrl.ToString());
+
+            //Get tables from page
+            IEnumerable<HtmlNode> tableNode = pageResult.DocumentNode.CssSelect("tbody");
+
+            //Loop through tables skipping table one
+            for (int table = 1; table < tableNode.Count(); table++)
+            {
+                var tableRows = tableNode.ElementAt(table).CssSelect("tr");
+                var trailZone = tableRows.ElementAt(0).InnerText;
+
+                //Loop Through Rows adding to database skipping rows one and 2
+                for (int tablerow = 2; tablerow < tableRows.Count(); tablerow++)
+                {
+                    var rowCells = tableRows.ElementAt(tablerow).CssSelect("td");
+                    string trailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
+                    //Retrieve the trail in the database so it can be updated with new conditions
+                    Trail trail = db.Trails.Where(x => x.TrailName == trailName).First();
+                    //Check if there's a new condition
+                    if (trail.Conditions.Count() == 0 || trail.Conditions.Last().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
+                    {
+                        Condition condition = new Condition()
+                        {
+                            Description = Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText),
+                            Date = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText))
+                        };
+
+                        trail.Conditions.Add(condition);
+                    }
+                }
+                db.SaveChanges();
+            }
+            return View();
         }
 
         // GET: Condition/Details/5
