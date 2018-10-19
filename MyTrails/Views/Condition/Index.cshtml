@@ -17,9 +17,7 @@
     <h3>@zones.ElementAt(i)</h3>
     <table class="table">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Trail.TrailName)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.PercentSnowCover)
             </th>
@@ -31,36 +29,37 @@
             </th>
             <th></th>
         </tr>
-
-
-
-        @foreach (var item in Model.Where(x => x.Trail.Zone == zones.ElementAt(i)))
+        </table>
+        var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct(); 
+        foreach (var item in trailName)
         {
+        @item
+            //var conditions = Model.Where(x => x.Trail.TrailName == item);
+
+    <table class="table">
+        @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
+        {
+
+
         <tr>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Trail.TrailName)
+                @Html.DisplayFor(modelItem => condition.PercentSnowCover)
 
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PercentSnowCover)
+                @Html.DisplayFor(modelItem => condition.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => condition.Date)
+            </td>
 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
         </tr>
         }
-        
-
     </table>
+        }
+    
 }
+
 
 
