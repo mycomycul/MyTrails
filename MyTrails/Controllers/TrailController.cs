@@ -102,13 +102,6 @@ namespace MyTrails.Controllers
 
 
 
-        [HttpGet]
-        public JsonResult GetTrailData(string trailName)
-        {
-
-
-            return Json(true);
-        }
 
         // GET: Trail/Details/5
         public ActionResult Details(int? id)
@@ -209,7 +202,7 @@ namespace MyTrails.Controllers
         {
 
             //Setup Browser and download page 
-            var baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
+            Uri baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
             HtmlWeb web = new HtmlWeb();
             var pageResult = web.Load(baseUrl.ToString());
 
@@ -230,38 +223,23 @@ namespace MyTrails.Controllers
                     var rowCells = tableRows.ElementAt(tablerow).CssSelect("td");
                     string trailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
 
-                    Trail trail = new Trail();
+                    Trail trail;
+                    //If the current row on the website doesn't exist in the database, create the trail
                     if (!db.Trails.Where(x => x.TrailName == trailName).Any())
                     {
-                        trail.TrailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
-                        trail.TotalMiles = Scraper.ExtractMiles(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
-                        trail.ShortDescription = Scraper.CleanFromHTML(rowCells.ElementAt(1).InnerText);
-                        trail.Elevation = Scraper.ExtractElevations(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
-                        trail.InfoHTMLLink = rowCells.ElementAt(0).CssSelect("a").Any() ? baseUrl.Host + Scraper.CleanFromHTML(rowCells.ElementAt(0).CssSelect("a").First().GetAttributeValue("href")) : null;
-                        trail.Agency = "Olympic National Park";
-                        trail.Zone = trailZone;
+                        trail = new Trail(rowCells, trailZone, baseUrl);
                         db.Trails.Add(trail);
                         db.SaveChanges();
                     }
+                    //else retrieve the trail in the database so it can be updated with new conditions
                     else
                     {
                         trail = db.Trails.Where(x => x.TrailName == trailName).First();
                     };
 
-                    DateTime? conditionDate = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText));
-
-                    if (trail.Conditions.Count() == 0)
-                    {
-
-                        Condition condition = new Condition()
-                        {
-                            Description = Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText),
-                            Date = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText))
-                        };
-
-                        trail.Conditions.Add(condition);
-                    }
-                    else if (trail.Conditions.Last().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
+                    //DateTime? conditionDate = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText));
+                    //If there are no
+                    if (trail.Conditions.Count() == 0 || trail.Conditions.Last().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
                     {
                         Condition condition = new Condition()
                         {
@@ -277,6 +255,11 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
+        public void AddCondition()
+        {
+
+        }
+        
         public ActionResult ImportJSONtrail()
         {
             GeoJSONTools geoTools = new GeoJSONTools();
