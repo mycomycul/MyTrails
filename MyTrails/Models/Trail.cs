@@ -1,10 +1,12 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using MyTrails.Libraries;
+using ScrapySharp.Extensions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Spatial;
 using System.Linq;
-using System.Web;
 
 
 namespace MyTrails.Models
@@ -38,6 +40,19 @@ namespace MyTrails.Models
             Conditions = new List<Condition>();
             this.Posts = new HashSet<Post>();
         }
+        public Trail(IEnumerable<HtmlNode> rowCells, string trailZone, Uri baseUrl)
+        {
+            Id = Guid.NewGuid().ToString();
+            Conditions = new List<Condition>();
+            this.Posts = new HashSet<Post>();
+            this.TrailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
+            this.TotalMiles = Scraper.ExtractMiles(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
+            this.ShortDescription = Scraper.CleanFromHTML(rowCells.ElementAt(1).InnerText);
+            this.Elevation = Scraper.ExtractElevations(Scraper.CleanFromHTML(rowCells.ElementAt(2).InnerText));
+            this.InfoHTMLLink = rowCells.ElementAt(0).CssSelect("a").Any() ? baseUrl.Host + Scraper.CleanFromHTML(rowCells.ElementAt(0).CssSelect("a").First().GetAttributeValue("href")) : null;
+            this.Agency = "Olympic National Park";
+            this.Zone = trailZone;
+        }
     }
 
     public class TrailSection
@@ -50,7 +65,7 @@ namespace MyTrails.Models
         public string Status { get; set; }
 
 
-        public string  TrailID { get; set; }
+        public string TrailID { get; set; }
         public virtual Trail Trail { get; set; }
 
 
