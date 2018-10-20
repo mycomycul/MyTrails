@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Data.Entity.Spatial;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -23,10 +24,40 @@ namespace MyTrails.Controllers
         
         private readonly JObject trailData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
+
+
         // GET: Trail
         public ActionResult Index()
         {
-            return View(db.Trails.ToList());
+            var vm = db.Trails.ToList();
+            var t = vm.Where(x => x.TrailSections.Count() > 0).First().TrailSections.First().Geography.AsArray();
+
+            return Json(t,JsonRequestBehavior.AllowGet);
+        
+        }
+
+        public decimal[,] ConvertSpatialToJson(string spatial)
+        {
+            //spatial = spatial.Replace("LINESTRING (", "[[");
+            //spatial = spatial.Replace(", ", "],[");
+            //spatial = spatial.Replace(")", "]]");
+            //spatial = spatial.Replace(" ", ",");
+            spatial = spatial.Replace("LINESTRING (", "");
+            string[] separator = { ", " };
+            spatial = spatial.Replace(")", "");
+            string[] spatialArray;
+            spatialArray = spatial.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            decimal[,] fullSpatialArray = new decimal[spatialArray.Length, 2];
+            for (int i = 0; i < spatialArray.Length; i++)
+            {
+                string[] coordinates = spatialArray[i].Split(' ');
+                fullSpatialArray[i, 0] = Convert.ToDecimal(coordinates[0]);
+                fullSpatialArray[i, 1] = Convert.ToDecimal(coordinates[1]);
+
+            }
+
+            return fullSpatialArray;
+
         }
         /// <summary>
         /// Select Trails from the database without geospatial data and geospatial data without
@@ -63,6 +94,7 @@ namespace MyTrails.Controllers
 
         public ActionResult Map()
         {
+
             return View();
         }
 

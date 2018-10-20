@@ -11,6 +11,28 @@ using Microsoft.SqlServer.Types;
 
 namespace MyTrails.Libraries
 {
+    public static class MyExtensions{
+
+        public static Array AsArray(this DbGeography geography)
+        {
+            string spatial = geography.AsText();
+            spatial = spatial.Replace("LINESTRING (", "");
+            string[] separator = { ", " };
+            spatial = spatial.Replace(")", "");
+            string[] spatialArray;
+            spatialArray = spatial.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+            decimal[,] fullSpatialArray = new decimal[spatialArray.Length, 2];
+            for (int i = 0; i < spatialArray.Length; i++)
+            {
+                string[] coordinates = spatialArray[i].Split(' ');
+                fullSpatialArray[i, 0] = Convert.ToDecimal(coordinates[0]);
+                fullSpatialArray[i, 1] = Convert.ToDecimal(coordinates[1]);
+
+            }
+            return fullSpatialArray;
+        }
+
+    }
     public class GeoJSONTools
     {
         ApplicationDbContext db = new ApplicationDbContext();
