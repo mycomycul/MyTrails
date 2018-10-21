@@ -13,9 +13,32 @@ namespace MyTrails.Libraries
 {
     public static class MyExtensions{
 
-        public static Array AsArray(this DbGeography geography)
+        /// <summary>
+        /// Calls method ConvertSQLGeographyTextStringToArray() on current geography object
+        /// </summary>
+        /// <param name="geography"></param>
+        /// <returns></returns>
+        public static decimal[,] AsArray(this DbGeography geography)
+        {       
+            return GeoJSONTools.ConvertSQLGeographyTextStringToArray(geography.AsText());
+        }
+
+    }
+    public class GeoJSONTools
+    {
+        ApplicationDbContext db = new ApplicationDbContext();
+        public void AddElevation()
         {
-            string spatial = geography.AsText();
+
+        }
+
+        /// <summary>
+        /// Converts text string of geography and converts it to 
+        /// </summary>
+        /// <param name="spatial"></param>
+        /// <returns></returns>
+        public static decimal[,] ConvertSQLGeographyTextStringToArray(string spatial)
+        {
             spatial = spatial.Replace("LINESTRING (", "");
             string[] separator = { ", " };
             spatial = spatial.Replace(")", "");
@@ -30,15 +53,6 @@ namespace MyTrails.Libraries
 
             }
             return fullSpatialArray;
-        }
-
-    }
-    public class GeoJSONTools
-    {
-        ApplicationDbContext db = new ApplicationDbContext();
-        public void AddElevation()
-        {
-
         }
 
         public void InputGeoJson1(string filename)
@@ -143,6 +157,31 @@ namespace MyTrails.Libraries
                 return "Point";
             }
 
+        }
+
+        /// <summary>
+        /// Used for organizing data for returning to map
+        /// Must be nested in a collection to be parsed on View
+        /// </summary>
+        public class singleTrailSection
+        {
+            public decimal[,] Geometry { get; set; }
+            public string Note { get; set; }
+
+            public singleTrailSection() : this(new decimal[0, 2], "")
+            {
+
+            }
+            public singleTrailSection(decimal[,] geometry) : this(geometry, "")
+            {
+
+            }
+
+            public singleTrailSection(decimal[,] geometry, string note)
+            {
+                Geometry = geometry;
+                Note = note;
+            }
         }
 
     }
