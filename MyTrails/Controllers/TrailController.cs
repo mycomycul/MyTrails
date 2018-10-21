@@ -14,14 +14,14 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using static MyTrails.Libraries.GeoJSONTools;
 
 namespace MyTrails.Controllers
 {
     public class TrailController : Controller
     {
 
-        private ApplicationDbContext db = new ApplicationDbContext();
-        
+        private ApplicationDbContext db = new ApplicationDbContext();        
         private readonly JObject trailData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
 
@@ -30,108 +30,52 @@ namespace MyTrails.Controllers
         public ActionResult Index()
         {
             var vm = db.Trails.ToList();
-            var t = vm.Where(x => x.TrailSections.Count() > 0).First().TrailSections.First().Geography.AsArray();
-
-            return Json(t,JsonRequestBehavior.AllowGet);
+            return View(vm);
         
         }
 
-        public decimal[,] ConvertSpatialToJson(string spatial)
-        {
-            //spatial = spatial.Replace("LINESTRING (", "[[");
-            //spatial = spatial.Replace(", ", "],[");
-            //spatial = spatial.Replace(")", "]]");
-            //spatial = spatial.Replace(" ", ",");
-            spatial = spatial.Replace("LINESTRING (", "");
-            string[] separator = { ", " };
-            spatial = spatial.Replace(")", "");
-            string[] spatialArray;
-            spatialArray = spatial.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-            decimal[,] fullSpatialArray = new decimal[spatialArray.Length, 2];
-            for (int i = 0; i < spatialArray.Length; i++)
-            {
-                string[] coordinates = spatialArray[i].Split(' ');
-                fullSpatialArray[i, 0] = Convert.ToDecimal(coordinates[0]);
-                fullSpatialArray[i, 1] = Convert.ToDecimal(coordinates[1]);
 
-            }
 
-            return fullSpatialArray;
-
-        }
         /// <summary>
-        /// Select Trails from the database without geospatial data and geospatial data without
+        /// Converts sql server geography data string provided by AsText() and creates a comparable Json Array
         /// </summary>
+        /// <param name="spatial"></param>
         /// <returns></returns>
+
+
+        /// <summary>
+        /// Select Trails from the database without geospatial data and geospatial data without matching trailnames in the db so they can be paired up
+        /// </summary>
+        /// <returns>View and CombineViewModel</returns>
         [HttpGet]
-        public ActionResult Combine()
+        public ActionResult ManuallyAddJsonToDb()
         {
             dynamic features = trailData["features"];
 
-            //var features = trailData.features;
-
-            List<string> trailNames = new List<string>();
-
+            //Get the names of all trails in the db without a trailsection.  If no trailsection, Automatically addin Geometry to the Db didn't work
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
+
+            //Gets the names of features in the JSON without db entries by checking for each name in the db
+            List<string> trailNames = new List<string>();
             for (int i = 0; i < features.Count; i++)
             {
-                string tu = features[i].attributes.TRLNAME.Value;
-                if (!db.Trails.Any(x => x.TrailName == tu))
+                string currentFeature = features[i].attributes.TRLNAME.Value;
+                if (!db.Trails.Any(x => x.TrailName == currentFeature))
                 {
                     trailNames.Add(features[i].attributes.TRLNAME.Value);
                 }
             }
 
-            CombineViewModel vm = new CombineViewModel()
-            {
-                Trails = Trails,
-                TrailSections = trailNames.Distinct().OrderBy(x => x).ToList()
-            };
 
-
-            return View(vm);
-        }
-
-        public ActionResult Map()
-        {
-
-            return View();
+            return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList()));
         }
 
         [HttpPost]
-        public ActionResult CombineGeoJsonWithDb(string trailNameInDb, string[] trailFeatureNames)
+        public ActionResult ManuallyAddJsonToDb(string trailNameInDb, string[] trailFeatureNames)
         {
 
             return new EmptyResult();
-
         }
-
-        /// <summary>
-        /// Extracts geometry and notes for all trail sections in the GeoJson data that 
-        /// has the same name returns it as Json
-        /// </summary>
-        /// <param name="trailSectionName"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public string GetGeoJsonData(string trailSectionName)
-        {
-            dynamic features = trailData["features"];
-            try
-            {
-
-                //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
-                var trailSections = (from s in features as IEnumerable<dynamic>
-                                     where s.attributes.TRLNAME == trailSectionName
-                                     select new { Geometry = s.geometry.paths, Notes = s.attributes.NOTES }).ToList();
-                var ser = JsonConvert.SerializeObject(trailSections);
-                return (JsonConvert.SerializeObject(trailSections));
-            }
-            catch (Exception e)
-            {
-                return (e.Message);
-            }
-        }
-
 
 
 
@@ -230,6 +174,21 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+        public ActionResult Map()
+        {
+            return View();
+        }
+
+        public ActionResult ImportJSONtrail()
+        {
+            GeoJSONTools geoTools = new GeoJSONTools();
+            geoTools.ImportGeoJson2();
+
+            return new EmptyResult();
+        }
+
         /// <summary>
         /// Imports trails and conditions to the db from the Olympic Naitonal Park trail conditions 
         /// </summary>
@@ -291,18 +250,52 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
- 
-        public ActionResult ImportJSONtrail()
-        {
-            GeoJSONTools geoTools = new GeoJSONTools();
-            geoTools.ImportGeoJson2();
 
-            return new EmptyResult();
+        /// <summary>
+        /// Extracts geometry and notes for all trail sections in the GeoJson data that 
+        /// have the same name and returns them as Json
+        /// </summary>
+        /// <param name="trailSectionName"></param>
+        /// <returns></returns>
+        public string GetJsonTrailData(string trailSectionName)
+        {
+            dynamic features = trailData["features"];
+            try
+            {
+                //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
+                var trailSections = (from s in features as IEnumerable<dynamic>
+                                     where s.attributes.TRLNAME == trailSectionName
+                                     select new { Geometry = s.geometry.paths[0], Notes = s.attributes.NOTES }).ToList();
+                return (JsonConvert.SerializeObject(trailSections));
+            }
+            catch (Exception e)
+            {
+                return (e.Message);
+
+            }
         }
 
+        /// <summary>
+        /// Finds a Trail in the DB with the same TrailName as the received trailSectionName parameter and returns its notes and geometry as JSON
+        /// </summary>
+        /// <param name="trailSectionName"></param>
+        /// <returns></returns>
+        public string GetDbTrailData(string trailSectionName)
+        {
+            //For testing without a name parameter
+            var dbTrail = db.Trails.Where(m => m.TrailSections.Count > 0).First();
 
-
-
+            //Query the db for trails using the received trailSectionName
+            //var dbTrail = db.Trails.Where(m => m.TrailName == trailSectionName).First();
+            List<singleTrailSection> FullTrail = new List<singleTrailSection>();
+            foreach (var geometrySection in dbTrail.TrailSections)
+            {
+                //Save Notes and geometry from the current section of the trail to full trail
+                //Geography uses extension method provided by GeoJSONTools
+                FullTrail.Add(new singleTrailSection(geometrySection.Geography.AsArray(), geometrySection.ShortDescription));
+            }
+            return JsonConvert.SerializeObject(FullTrail);
+        }
 
         protected override void Dispose(bool disposing)
         {
