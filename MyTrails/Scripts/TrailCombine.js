@@ -40,7 +40,7 @@ function getGeoJsonData($geoDataNameElement) {
         trailSectionName: $geoDataNameElement.text()
     };
     $.ajax({
-        url: "GetGeoJsonData",
+        url: "GetJsonTrailData",
         data: data,
         dataType: 'json',
         success: function (result) {
@@ -51,7 +51,7 @@ function getGeoJsonData($geoDataNameElement) {
                     //Take received array of numeric coordinates and convert them to an array of google points
                     let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
                     //Create a marker or polyline from the google points
-                    let mapFeature = createMapFeature(latLng, result[k].Notes);
+                    let mapFeature = createMapFeature(latLng, result[k].Note);
                     //Save the new fature to an array of features that can be added and removed from the map
                     mapFeatures.push(mapFeature);
                     //Update the array of trail features associated with the the selected "GeoData" trail name
