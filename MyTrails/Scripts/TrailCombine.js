@@ -31,18 +31,7 @@ $(function () {
     });
 });
 
-//Google Maps API callback function
-//Sets map values and dispalys the map
-function myMap() {
-    //Map target, zoom and center required            
-    var mapCanvas = document.getElementById('map');
-    var mapCenter = { lat: 47.7, lng: -123.63 };
-    var mapZoom = 8;
-    var mapType = 'terrain';
-    var mapOptions = { center: mapCenter, zoom: mapZoom, mapTypeId: mapType };
-    map = new google.maps.Map(mapCanvas, mapOptions);
-    //infowindow = new google.maps.InfoWindow;
-}
+
 
 //Get Trail Section Coordinates
 function getGeoJsonData($geoDataNameElement) {
@@ -60,7 +49,7 @@ function getGeoJsonData($geoDataNameElement) {
                 //for each set of coordinates with the same name in the geojson data
                 for (var k = 0; k < result.length; k++) {
                     //Take received array of numeric coordinates and convert them to an array of google points
-                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry[0]);
+                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
                     //Create a marker or polyline from the google points
                     let mapFeature = createMapFeature(latLng, result[k].Notes);
                     //Save the new fature to an array of features that can be added and removed from the map
@@ -79,21 +68,7 @@ function getGeoJsonData($geoDataNameElement) {
     });
     return true;
 }
-//Remove google feature associated with the received element
-function removeFeatureFromMap(sectionToRemove) {
-    let sections = sectionToRemove.data("featurenumbers");
-    for (var i = 0; i < sections.length; i++) {
-        mapFeatures[sections[i]].setMap(null);
-    }
-}
 
-//Display feature associated with the the received element
-function displayFeatureOnMap($thisSection) {
-    var markers = $thisSection.data("featurenumbers");
-    for (var i = 0; i < markers.length; i++) {
-        mapFeatures[markers[i]].setMap(map);
-    }
-}
 //Submit selected trail from db and selected trails from GEOJson Data to be combined and saved in the the database
 function submitCombine() {
     //Get names of of geoData features selected to save to the selected trail in the Db
@@ -127,6 +102,35 @@ function submitCombine() {
 var map; //variable so that we can target the map when adding/removing markersa
 var mapFeatures = [];
 var infowindow;
+
+//Google Maps API callback function
+//Sets map values and dispalys the map
+function myMap() {
+    //Map target, zoom and center required            
+    var mapCanvas = document.getElementById('map');
+    var mapCenter = { lat: 47.7, lng: -123.63 };
+    var mapZoom = 8;
+    var mapType = 'terrain';
+    var mapOptions = { center: mapCenter, zoom: mapZoom, mapTypeId: mapType };
+    map = new google.maps.Map(mapCanvas, mapOptions);
+    //infowindow = new google.maps.InfoWindow;
+}
+
+//Remove google feature associated with the received element
+function removeFeatureFromMap(sectionToRemove) {
+    let sections = sectionToRemove.data("featurenumbers");
+    for (var i = 0; i < sections.length; i++) {
+        mapFeatures[sections[i]].setMap(null);
+    }
+}
+
+//Display feature associated with the the received element
+function displayFeatureOnMap($thisSection) {
+    var markers = $thisSection.data("featurenumbers");
+    for (var i = 0; i < markers.length; i++) {
+        mapFeatures[markers[i]].setMap(map);
+    }
+}
 
 function createMapFeature(googlePoints, title) {
     var mapFeature;
