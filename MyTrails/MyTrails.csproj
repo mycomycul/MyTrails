@@ -324,7 +324,7 @@
     <Content Include="Views\Condition\Details.cshtml" />
     <Content Include="Views\Condition\Edit.cshtml" />
     <Content Include="Views\Condition\Index.cshtml" />
-    <Content Include="Views\Trail\Combine.cshtml" />
+    <Content Include="Views\Trail\ManuallyAddJsonToDb.cshtml" />
     <Content Include="Views\Trail\Map.cshtml" />
     <Content Include="Views\Condition\ImportNewConditions.cshtml" />
     <Content Include="Views\Trail\Index.cshtml" />
