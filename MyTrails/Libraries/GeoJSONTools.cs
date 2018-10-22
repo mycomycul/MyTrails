@@ -11,7 +11,8 @@ using Microsoft.SqlServer.Types;
 
 namespace MyTrails.Libraries
 {
-    public static class MyExtensions{
+    public static class MyExtensions
+    {
 
         /// <summary>
         /// Calls method ConvertSQLGeographyTextStringToArray() on current geography object
@@ -19,7 +20,7 @@ namespace MyTrails.Libraries
         /// <param name="geography"></param>
         /// <returns></returns>
         public static decimal[,] AsArray(this DbGeography geography)
-        {       
+        {
             return GeoJSONTools.ConvertSQLGeographyTextStringToArray(geography.AsText());
         }
 
@@ -124,28 +125,46 @@ namespace MyTrails.Libraries
 
         }
 
+
+        /// <summary>
+        /// Takes a dynamic feature parsed from JSON along with a trailname and wkid and creates a TrailSection
+        /// </summary>
+        /// <param name="trailname"></param>
+        /// <param name="trail"></param>
+        /// <param name="wkid"></param>
+        /// <returns></returns>
         public static TrailSection CreateTrailSection(string trailname, dynamic trail, string wkid)
         {
-            string LineType = GeometryType(trail.geometry.paths[0].Count);
             //Check if this should be a point or line
-            TrailSection ts = new TrailSection();
+            string LineType = GeometryType(trail.geometry.paths[0].Count);
+
             //Create geometry string for creating GEOSpatial geography in SQL Server
             string geometryString = LineType + " (";
             foreach (dynamic point in trail.geometry.paths[0])
             {
                 geometryString += (string)point[0] + " " + (string)point[1] + ",";
             }
+            //Remove last comma and replace with a closing parenthese
             geometryString = geometryString.Remove(geometryString.Length - 1);
             geometryString += ")";
-
             //Build new trial section
-            ts.Id = trail.attributes.FEATUREID;
-            ts.ShortDescription = trail.attributes.TRLNAME;
-            ts.Geography = DbGeography.FromText(geometryString, Convert.ToInt32(wkid));
-            ts.Status = trail.attributes.TRLSTATUS;
+            TrailSection ts = new TrailSection()
+            {
+                Id = trail.attributes.FEATUREID,
+                ShortDescription = trail.attributes.TRLNAME,
+                Geography = DbGeography.FromText(geometryString, Convert.ToInt32(wkid)),
+                Status = trail.attributes.TRLSTATUS
+            };
+
             return ts;
         }
 
+
+        /// <summary>
+        /// Returns "LineString" if pointcount is > 1 else returns "Point"
+        /// </summary>
+        /// <param name="pointcount"></param>
+        /// <returns></returns>
         public static string GeometryType(int pointcount)
         {
             if (pointcount > 1)
@@ -156,28 +175,24 @@ namespace MyTrails.Libraries
             {
                 return "Point";
             }
-
         }
 
         /// <summary>
-        /// Used for organizing data for returning to map
+        /// Used for organizing data for returning to a map view
         /// Must be nested in a collection to be parsed on View
         /// </summary>
-        public class singleTrailSection
+        public class SingleTrailSection
         {
             public decimal[,] Geometry { get; set; }
             public string Note { get; set; }
 
-            public singleTrailSection() : this(new decimal[0, 2], "")
+            public SingleTrailSection() : this(new decimal[0, 2], "")
             {
-
             }
-            public singleTrailSection(decimal[,] geometry) : this(geometry, "")
+            public SingleTrailSection(decimal[,] geometry) : this(geometry, "")
             {
-
             }
-
-            public singleTrailSection(decimal[,] geometry, string note)
+            public SingleTrailSection(decimal[,] geometry, string note)
             {
                 Geometry = geometry;
                 Note = note;
