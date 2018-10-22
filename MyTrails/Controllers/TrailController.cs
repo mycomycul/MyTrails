@@ -73,7 +73,8 @@ namespace MyTrails.Controllers
         [HttpPost]
         public ActionResult ManuallyAddJsonToDb(string trailNameInDb, string[] trailFeatureNames)
         {
-
+            dynamic features = trailData["features"];
+            var jData = features.Where;
             return new EmptyResult();
         }
 
@@ -251,27 +252,44 @@ namespace MyTrails.Controllers
         }
 
 
+        public string GetJsonTrailDataFromJson(string trailSectionName)
+        {
+            var trailSections = GetTrailDataFromJson(trailSectionName);
+            return (JsonConvert.SerializeObject(trailSections));
+        }
+        
         /// <summary>
         /// Extracts geometry and notes for all trail sections in the GeoJson data that 
         /// have the same name and returns them as Json
         /// </summary>
         /// <param name="trailSectionName"></param>
         /// <returns></returns>
-        public string GetJsonTrailData(string trailSectionName)
+        public List<SingleTrailSection> GetTrailDataFromJson(string trailSectionName)
         {
             dynamic features = trailData["features"];
             try
             {
                 //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
-                var trailSections = (from s in features as IEnumerable<dynamic>
+                dynamic trailSections = (from s in features as IEnumerable<dynamic>
                                      where s.attributes.TRLNAME == trailSectionName
-                                     select new { Geometry = s.geometry.paths[0], Notes = s.attributes.NOTES }).ToList();
-                return (JsonConvert.SerializeObject(trailSections));
+                                     select new { Geometry = s.geometry.paths[0], Note = s.attributes.NOTES}).ToList();
+                List<SingleTrailSection> st = new List<SingleTrailSection>();
+                foreach (var feature in trailSections)
+                {
+                    SingleTrailSection t = new SingleTrailSection();
+                    t.Geometry = feature.Geometry.ToObject<decimal[,]>();
+                        t.Note = feature.Note.ToString();
+                    var r = feature.Geometry.ToObject<decimal[,]>();
+                    st.Add(t);
+                }
+
+                return st;
             }
             catch (Exception e)
             {
-                return (e.Message);
-
+                //return e.Message;
+                //return new EmptyResult()
+                return new List<SingleTrailSection>();
             }
         }
 
@@ -287,12 +305,12 @@ namespace MyTrails.Controllers
 
             //Query the db for trails using the received trailSectionName
             //var dbTrail = db.Trails.Where(m => m.TrailName == trailSectionName).First();
-            List<singleTrailSection> FullTrail = new List<singleTrailSection>();
+            List<SingleTrailSection> FullTrail = new List<SingleTrailSection>();
             foreach (var geometrySection in dbTrail.TrailSections)
             {
                 //Save Notes and geometry from the current section of the trail to full trail
                 //Geography uses extension method provided by GeoJSONTools
-                FullTrail.Add(new singleTrailSection(geometrySection.Geography.AsArray(), geometrySection.ShortDescription));
+                FullTrail.Add(new SingleTrailSection(geometrySection.Geography.AsArray(), geometrySection.ShortDescription));
             }
             return JsonConvert.SerializeObject(FullTrail);
         }
