@@ -14,51 +14,51 @@
 }
 @for (int i = 0; i < zones.Count(); i++)
 {
-    <h3>@zones.ElementAt(i)</h3>
-    <table class="table">
-        <tr>
+    <h3 data-toggle="collapse" data-target=".zone-@i">@zones.ElementAt(i)</h3>
 
-            <th>
-                @Html.DisplayNameFor(model => model.PercentSnowCover)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th></th>
-        </tr>
+    var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
+    foreach (var item in trailName)
+    {
+    <div class="zone-@i collapse">
+        <h4 data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
+
+        <table class="table collapse conditions-@item.Replace(" ","")">
+            <tr>
+
+                <th>
+                    Snow
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
+            {
+
+
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => condition.PercentSnowCover)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => condition.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => condition.Date)
+                    </td>
+
+                </tr>
+            }
         </table>
-        var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct(); 
-        foreach (var item in trailName)
-        {
-        @item
-            //var conditions = Model.Where(x => x.Trail.TrailName == item);
+    </div>
+    }
 
-    <table class="table">
-        @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
-        {
-
-
-        <tr>
-
-            <td>
-                @Html.DisplayFor(modelItem => condition.PercentSnowCover)
-
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => condition.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => condition.Date)
-            </td>
-
-        </tr>
-        }
-    </table>
-        }
-    
 }
 
 
