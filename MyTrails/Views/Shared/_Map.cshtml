@@ -1,0 +1,14 @@
+﻿<div id="map" class="map"></div>
+
+
+<script src="~/Credentials/Credentials.js"></script>
+<script>
+(function(d){
+    var file = 'https://maps.googleapis.com/maps/api/js?key='+ googlekey +'&callback=myMap';
+    var ref = d.getElementsByTagName('script')[0];
+    var js = d.createElement('script');
+    js.src = file;
+    ref.parentNode.insertBefore(js, ref);
+}(document));</script>
+
+@Scripts.Render("~/bundles/trailcombine")
