@@ -1,5 +1,4 @@
-﻿
-//Setup click functionality for single select list and multi-select list
+﻿//Setup click functionality for single select list and multi-select list
 $(function () {
 
     //Single select functionality removes "selected-list-item" class from all single select elements and adds the class 
@@ -22,7 +21,7 @@ $(function () {
             else {
                 $thisSection.addClass("selected-list-item");
                 //If no data has been associated with the clicked element, retrieve data form the server
-                if ($thisSection.data("featurenumbers").length === 0) GetJsonTrailData($thisSection);
+                if ($thisSection.data("featurenumbers").length === 0) GetTrailData($thisSection);
 
                 //display data associated with the element
                 displayFeatureOnMap($thisSection);
@@ -30,33 +29,3 @@ $(function () {
         });
     });
 });
-
-
-
-
-
-//Submit selected trail from db and selected trails from GEOJson Data to be combined and saved in the the database
-function submitCombine() {
-    //Get names of of geoData features selected to save to the selected trail in the Db
-    var geoDataFeatureNames = $("li.multi-select.selected-list-item").map(function () {
-        return $(this).text();
-    }).get();
-    //get name of the trail in the db to add spatial data to from geoJson data
-    var dbTrailName = $('li.single-select.selected-list-item').text();
-    var data = {
-        trailFeatureNames: geoDataFeatureNames,
-        trailNameInDb: dbTrailName
-    };
-
-    $.ajax({
-        url: "CombineGeoJsonWithDb",
-        data: data,
-        method: "POST",
-        success: function (result) {
-            alert(result);
-        }
-    });
-    return true;
-}
-
-

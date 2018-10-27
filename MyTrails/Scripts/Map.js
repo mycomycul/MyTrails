@@ -28,6 +28,77 @@ function myMap() {
     //infowindow = new google.maps.InfoWindow;
 }
 
+//Get Trail Section Coordinates from db
+function GetTrailData($geoDataNameElement) {
+
+    var data = {
+        trailSectionName: $geoDataNameElement.text()
+    };
+    $.ajax({
+        url: "/Trail/GetDbTrailData",
+        data: data,
+        dataType: 'json',
+        success: function (result) {
+            //if geospatial data was found
+            if (result.length > 0) {
+                //for each set of coordinates with the same name in the geojson data
+                for (var k = 0; k < result.length; k++) {
+                    //Take received array of numeric coordinates and convert them to an array of google points
+                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
+                    //Create a marker or polyline from the google points
+                    let mapFeature = createMapFeature(latLng, result[k].Note);
+                    //Save the new fature to an array of features that can be added and removed from the map
+                    mapFeatures.push(mapFeature);
+                    //Update the array of trail features associated with the the selected "GeoData" trail name
+
+                    let featureNumbers = $geoDataNameElement.data("featurenumbers");
+                    featureNumbers.push(mapFeatures.length - 1);
+                    $geoDataNameElement.data("featurenumbers", featureNumbers);
+                }
+            }
+            else {
+                alert("No valid map data was available");
+            }
+        }
+    });
+    return true;
+}
+//Get JSON Trail Section Coordinates
+function GetJsonTrailData($geoDataNameElement) {
+
+    var data = {
+        trailSectionName: $geoDataNameElement.text()
+    };
+    $.ajax({
+        url: "GetJsonTrailDataFromJson",
+        data: data,
+        dataType: 'json',
+        success: function (result) {
+            //if geospatial data was found
+            if (result.length > 0) {
+                //for each set of coordinates with the same name in the geojson data
+                for (var k = 0; k < result.length; k++) {
+                    //Take received array of numeric coordinates and convert them to an array of google points
+                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
+                    //Create a marker or polyline from the google points
+                    let mapFeature = createMapFeature(latLng, result[k].Note);
+                    //Save the new fature to an array of features that can be added and removed from the map
+                    mapFeatures.push(mapFeature);
+                    //Update the array of trail features associated with the the selected "GeoData" trail name
+
+                    let featureNumbers = $geoDataNameElement.data("featurenumbers");
+                    featureNumbers.push(mapFeatures.length - 1);
+                    $geoDataNameElement.data("featurenumbers", featureNumbers);
+                }
+            }
+            else {
+                alert("No valid map data was available");
+            }
+        }
+    });
+    return true;
+}
+
 //Remove google feature associated with the received element
 function removeFeatureFromMap(sectionToRemove) {
     let sections = sectionToRemove.data("featurenumbers");

@@ -19,7 +19,7 @@
             foreach (var item in trailName)
             {
                 <div class="zone-@i collapse">
-                    <h4 data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
+                    <h4 class="multi-select" data-featurenumbers="[]" data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
 
                     <table class="table collapse conditions-@item.Replace(" ","")">
                         <tr>
@@ -66,6 +66,11 @@
     </div>
 </div>
 <script src="~/Credentials/Credentials.js"></script>
+<script const dataLocation="@Url.Action("GetDbTrailData","Trail")"></script>
 
-@Scripts.Render("/bundles/trailcombine")
-@Scripts.Render("/bundles/map")
+@Scripts.Render("~/bundles/map")
+
+<script src="~/Scripts/mapindex.js"></script>
+
+
+@*@Scripts.Render("/bundles/trailcombine")*@

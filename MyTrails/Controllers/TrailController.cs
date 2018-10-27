@@ -301,10 +301,10 @@ namespace MyTrails.Controllers
         public string GetDbTrailData(string trailSectionName)
         {
             //For testing without a name parameter
-            var dbTrail = db.Trails.Where(m => m.TrailSections.Count > 0).First();
+            //var dbTrail = db.Trails.Where(m => m.TrailSections.Count > 0).First();
 
             //Query the db for trails using the received trailSectionName
-            //var dbTrail = db.Trails.Where(m => m.TrailName == trailSectionName).First();
+            var dbTrail = db.Trails.Where(m => m.TrailName == trailSectionName).First();
             List<SingleTrailSection> FullTrail = new List<SingleTrailSection>();
             foreach (var geometrySection in dbTrail.TrailSections)
             {
