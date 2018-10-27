@@ -27,8 +27,21 @@ textarea {
     background-color: #AAAAAA;
 }
 
-/*trailcombine page*/
-.map{
+/*Map styling for different pages*/
+
+/*Map Partial Defaults*/
+.map {
     height: 400px;
     width: 100%;
 }
+
+.trail-combine-map{
+    height: 400px;
+    width: 100%;
+}
+
+.condition-index-map {
+    height: 400px;
+    width: 100%;
+}
+

@@ -6,60 +6,66 @@
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-@{
-    var zones = Model.Select(x => x.Trail.Zone).Distinct();
-}
-@for (int i = 0; i < zones.Count(); i++)
-{
-    <h3 data-toggle="collapse" data-target=".zone-@i">@zones.ElementAt(i)</h3>
+<div class="row">
+    <div class=" = col-md-6">
+        @{
+            var zones = Model.Select(x => x.Trail.Zone).Distinct();
+        }
+        @for (int i = 0; i < zones.Count(); i++)
+        {
+            <h3 data-toggle="collapse" data-target=".zone-@i">@zones.ElementAt(i)</h3>
 
-    var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
-    foreach (var item in trailName)
-    {
-    <div class="zone-@i collapse">
-        <h4 data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
-
-        <table class="table collapse conditions-@item.Replace(" ","")">
-            <tr>
-
-                <th>
-                    Snow
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Date)
-                </th>
-                <th></th>
-            </tr>
-            @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
+            var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
+            foreach (var item in trailName)
             {
+                <div class="zone-@i collapse">
+                    <h4 data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
+
+                    <table class="table collapse conditions-@item.Replace(" ","")">
+                        <tr>
+
+                            <th>
+                                Snow
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Date)
+                            </th>
+                            <th></th>
+                        </tr>
+                        @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
+                        {
 
 
-                <tr>
+                            <tr>
 
-                    <td>
-                        @Html.DisplayFor(modelItem => condition.PercentSnowCover)
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.PercentSnowCover)
 
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => condition.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => condition.Date)
-                    </td>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.Date)
+                                </td>
 
-                </tr>
+                            </tr>
+                        }
+                    </table>
+                </div>
             }
-        </table>
+
+        }
+
     </div>
-    }
+    <div class="col-md-6">
+        <div id="map" class="condition-index-map"></div>
+    </div>
+</div>
+<script src="~/Credentials/Credentials.js"></script>
 
-}
-
-
-
+@Scripts.Render("/bundles/trailcombine")
+@Scripts.Render("/bundles/map")
