@@ -47,15 +47,16 @@ namespace MyTrails.Controllers
                 var tableRows = tableNode.ElementAt(table).CssSelect("tr");
                 var trailZone = tableRows.ElementAt(0).InnerText;
 
-                //Loop Through Rows adding to database skipping rows one and 2
+                //Loop Through Rows adding to Trails skipping header rows 1 and 2
                 for (int tablerow = 2; tablerow < tableRows.Count(); tablerow++)
                 {
                     var rowCells = tableRows.ElementAt(tablerow).CssSelect("td");
+                    ///Grab the trailname for the online condition
                     string trailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
-                    //Retrieve the trail in the database so it can be updated with new conditions
+                    //Find the updated trail in the database so it can be updated with new conditions
                     Trail trail = db.Trails.Where(x => x.TrailName == trailName).First();
-                    //Check if there's a new condition
-                    if (trail.Conditions.Count() == 0 || trail.Conditions.Last().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
+                    //If either no trai condtions
+                    if (trail.Conditions.LastOrDefault().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
                     {
                         Condition condition = new Condition()
                         {
@@ -71,19 +72,6 @@ namespace MyTrails.Controllers
             return View();
         }
 
-        // GET: Condition/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Condition condition = db.Conditions.Find(id);
-            if (condition == null)
-            {
-                return HttpNotFound();
-            }
-            return View(condition);
         }
 
         // GET: Condition/Create
