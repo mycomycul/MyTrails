@@ -24,8 +24,6 @@ namespace MyTrails.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();        
         private readonly JObject trailData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
-
-
         // GET: Trail
         public ActionResult Index()
         {
@@ -35,16 +33,10 @@ namespace MyTrails.Controllers
         }
 
 
-
         /// <summary>
-        /// Converts sql server geography data string provided by AsText() and creates a comparable Json Array
-        /// </summary>
-        /// <param name="spatial"></param>
-        /// <returns></returns>
-
-
-        /// <summary>
-        /// Select Trails from the database without geospatial data and geospatial data without matching trailnames in the db so they can be paired up
+        /// IN the event that automatic pairing between trail names on the website and JSON Data fails
+        /// THe Method selects Trails from the database without geospatial data and geospatial data without 
+        /// matching trailnames in the db so they can be paired up on a manual pairing page
         /// </summary>
         /// <returns>View and CombineViewModel</returns>
         [HttpGet]
@@ -52,7 +44,7 @@ namespace MyTrails.Controllers
         {
             dynamic features = trailData["features"];
 
-            //Get the names of all trails in the db without a trailsection.  If no trailsection, Automatically addin Geometry to the Db didn't work
+            //Get the names of all trails in the db without a trailsection.  If no trailsection, Automatically adding Geometry to the Db didn't work
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
 
             //Gets the names of features in the JSON without db entries by checking for each name in the db
@@ -70,6 +62,12 @@ namespace MyTrails.Controllers
             return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList()));
         }
 
+        /// <summary>
+        /// Incomplete method for combining the selected trail form the db and trail sections from JSON
+        /// </summary>
+        /// <param name="trailNameInDb"></param>
+        /// <param name="trailFeatureNames"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult ManuallyAddJsonToDb(string trailNameInDb, string[] trailFeatureNames)
         {
@@ -80,26 +78,7 @@ namespace MyTrails.Controllers
 
 
 
-        // GET: Trail/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Trail trail = db.Trails.Find(id);
-            if (trail == null)
-            {
-                return HttpNotFound();
-            }
-            return View(trail);
-        }
 
-        // GET: Trail/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
 
         // POST: Trail/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 

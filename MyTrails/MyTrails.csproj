@@ -207,7 +207,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ConditionController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TrailController.cs" />
     <Compile Include="Controllers\TrailReportController.cs" />
@@ -315,12 +314,8 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\TrailReport\Import.cshtml" />
     <Content Include="Views\TrailReport\Conditions.cshtml" />
-    <Content Include="Views\Trail\Create.cshtml" />
-    <Content Include="Views\Trail\Delete.cshtml" />
     <Content Include="Views\Trail\Details.cshtml" />
-    <Content Include="Views\Trail\Edit.cshtml" />
     <Content Include="Views\Condition\Create.cshtml" />
     <Content Include="Views\Condition\Delete.cshtml" />
     <Content Include="Views\Condition\Details.cshtml" />

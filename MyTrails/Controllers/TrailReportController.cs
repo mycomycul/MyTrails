@@ -14,134 +14,34 @@ using System.Threading.Tasks;
 
 namespace MyTrails.Controllers
 {
+    /// <summary>
+    /// This is a first pass at extracting data off the Olympic National Park Website and returning it to a view
+    /// </summary>
     public class TrailReportController : Controller
     {
-        // GET: TrailReport
-        public ActionResult Index()
-        {
-            return View();
-        }
 
-        // GET: TrailReport/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
-        // GET: TrailReport/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: TrailReport/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: TrailReport/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: TrailReport/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: TrailReport/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: TrailReport/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        [HttpGet]
-        public ActionResult Import()
-        {
-            return View();
-        }
-        [HttpPost]
-        public ActionResult Import(HttpPostedFileBase file)
-        {
-            XmlTextReader reader = new XmlTextReader("Trails.xml");
-            while (reader.Read())
-            {
-                switch (reader.NodeType)
-                {
-                    case XmlNodeType.Element: // The node is an element.
-                        Console.Write("<" + reader.Name);
-
-                        while (reader.MoveToNextAttribute()) // Read the attributes.
-                            Console.Write(" " + reader.Name + "='" + reader.Value + "'");
-                        Console.WriteLine(">");
-                        break;
-                    case XmlNodeType.Text: //Display the text in each element.
-                        Console.WriteLine(reader.Value);
-                        break;
-                    case XmlNodeType.EndElement: //Display the end of the element.
-                        Console.Write("</" + reader.Name);
-                        Console.WriteLine(">");
-                        break;
-                }
-            }
-            return View();
-        }
-        public ActionResult Conditions()
+        /// <summary>
+        /// Imports the Olympic National Park Trail Condtions website, parses conditions into a View Model and returns them on a page
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> Conditions()
         {
             List<TrailConditions> ConditionsList = new List<TrailConditions>();
             //Setup Browser and download page 
             var baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
             HtmlWeb web = new HtmlWeb();
             var PageResult = web.Load(baseUrl.ToString());
-            //var PageResult = web.NavigateToPageAsync(new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm"));
 
 
             //Get tables from page
             IEnumerable<HtmlNode> TableNode = PageResult.DocumentNode.CssSelect("tbody");
 
-            //Loop through tables skipping table one
+            //Loop through tables skipping the header row
             for (int i = 1; i < TableNode.Count(); i++)
             {
                 var tableRows = TableNode.ElementAt(i).CssSelect("tr");
-                //Loop Through Rows adding to database skipping rows one and 2
+                //Loop Through Rows adding to viewmodel database skipping rows one and 2
                 for (int j = 2; j < tableRows.Count(); j++)
                 {
                     var rowCells = tableRows.ElementAt(j).CssSelect("td");
@@ -175,7 +75,7 @@ namespace MyTrails.Controllers
             stringToClean = HTMLCommentRegEx.Replace(HttpUtility.HtmlDecode(stringToClean).Replace("\n", String.Empty), "");
             return stringToClean;
         }
-        //Need to account for oddities in elevations or mileagelike multiple mileage sets
+        //TODO Need to account for oddities in elevations or mileagelike multiple mileage sets
         float? ExtractMiles(string milesElevation)
         {
             try
@@ -188,7 +88,7 @@ namespace MyTrails.Controllers
                 return null;
             }
         }
-        //Need to account for oddities in elevations or mileagelike multiple mileage sets
+        //TODO Need to account for oddities in elevations or mileagelike multiple mileage sets
         string ExtractElevations(string milesElevation)
         {
             milesElevation = milesElevation.Remove(0, milesElevation.IndexOf("miles") + 5);
