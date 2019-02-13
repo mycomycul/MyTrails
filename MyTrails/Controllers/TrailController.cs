@@ -12,6 +12,7 @@ using System.Data.Entity;
 using System.Data.Entity.Spatial;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using static MyTrails.Libraries.GeoJSONTools;
@@ -157,6 +158,20 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Trails/Details/5
+        public async Task<ActionResult> Details(string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Trail trail = await db.Trails.FindAsync(id);
+            if (trail == null)
+            {
+                return HttpNotFound();
+            }
+            return View(trail);
+        }
 
 
         public ActionResult Map()
