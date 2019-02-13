@@ -221,6 +221,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TrailController.cs" />
     <Compile Include="Controllers\TrailReportController.cs" />
+    <Compile Include="Controllers\TrailsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -329,7 +330,6 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\TrailReport\Import.cshtml" />
-    <Content Include="Views\Trail\Details.cshtml" />
     <Content Include="Views\Condition\Create.cshtml" />
     <Content Include="Views\Condition\Delete.cshtml" />
     <Content Include="Views\Condition\Details.cshtml" />
@@ -341,8 +341,11 @@
     <Content Include="Views\Trail\MapIndex.cshtml" />
     <Content Include="Views\Shared\_Map.cshtml" />
     <Content Include="Views\Condition\Success.cshtml" />
+    <Content Include="Views\Trail\Details.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Trails\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
   </ItemGroup>

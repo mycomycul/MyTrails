@@ -17,15 +17,20 @@ $(function () {
             if ($thisSection.hasClass('selected-list-item')) {
                 $thisSection.removeClass("selected-list-item");
                 removeFeatureFromMap($thisSection);
+                
             }
             else {
                 $thisSection.addClass("selected-list-item");
                 //If no data has been associated with the clicked element, retrieve data form the server
                 if ($thisSection.data("featurenumbers").length === 0) GetTrailData($thisSection);
-
                 //display data associated with the element
                 displayFeatureOnMap($thisSection);
+                displayInfo(this.nextElementSibling);
             }
         });
     });
 });
+function displayInfo(element) {
+    $('#infofield').append(element);
+    $(element).append()
+}
