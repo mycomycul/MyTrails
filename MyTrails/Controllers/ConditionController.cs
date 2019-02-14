@@ -24,15 +24,15 @@ namespace MyTrails.Controllers
             return View(model);
         }
 
-        public ActionResult ImportNewConditions()
-        {
-            return View();
-        }
-
+        /// <summary>   (An Action that handles HTTP POST requests) updates this object. </summary>
+        ///
+        /// <remarks>   Michael, 2/15/2019. </remarks>
+        ///
+        /// <returns>   A response stream to send to the Success View. </returns>
         [HttpPost]
-        public ActionResult ImportNewConditions(string submit)
+        public ActionResult UpdateNPSConditions()
         {
-
+            List<Condition> model = new List<Condition>();
             //Setup Browser and download page 
             Uri baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");
             HtmlWeb web = new HtmlWeb();
@@ -55,23 +55,68 @@ namespace MyTrails.Controllers
                     string trailName = Scraper.CleanFromHTML(rowCells.ElementAt(0).InnerText);
                     //Find the updated trail in the database so it can be updated with new conditions
                     Trail trail = db.Trails.Where(x => x.TrailName == trailName).First();
-                    //If either no trai condtions
-                    if (trail.Conditions.LastOrDefault().Description != Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText))
+
+
+
+                    var trailcondition = trail.Conditions.OrderBy(x => x.Date).Last();
+
+                    var scrapedConditionDescription = Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText);                    
+                    var scrapedConditionDate = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText));
+
+                    if (scrapedConditionDate != trailcondition.Date)
                     {
+
                         Condition condition = new Condition()
                         {
-                            Description = Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText),
-                            Date = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText))
+                            Description = scrapedConditionDescription,
+                            Date = scrapedConditionDate
                         };
+                        model.Add(condition);
 
                         trail.Conditions.Add(condition);
                     }
+                    db.SaveChanges();
                 }
-                db.SaveChanges();
+
             }
-            return View();
+            ViewBag.Operation = "Added";
+
+            return View("Success", model.OrderBy(x => x.Date));
         }
 
+        ///TODO: Account for source. Only remove duplicates if from scraper
+        /// <summary>   Removes conditions with the same dates </summary>
+        ///
+        /// <remarks>   Michael, 2/16/2019. </remarks>
+        ///
+        /// <returns>   A response stream to send to the Success View</returns>
+
+        public ActionResult RemoveDuplicates()
+        {
+            var successModel = new List<Condition>();
+
+            foreach (var trail in db.Trails.ToList())
+            {
+                HashSet<DateTime?> conditionDates = new HashSet<DateTime?>();
+                foreach (var condition in trail.Conditions.ToList())
+                {
+                    if (conditionDates.Contains(condition.Date))
+                    {                     
+                        successModel.Add(condition);
+                    }
+                    else
+                    {
+                        conditionDates.Add(condition.Date);
+                    }
+                }
+            }
+            foreach (var item in successModel)
+            {
+                db.Conditions.Remove(item);
+            }
+            db.SaveChanges();
+            ViewBag.Operation = "Deleted";
+            return View("success", successModel);
         }
 
         // GET: Condition/Create
@@ -164,3 +209,4 @@ namespace MyTrails.Controllers
         }
     }
 }
+
