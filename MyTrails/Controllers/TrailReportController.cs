@@ -17,6 +17,7 @@ namespace MyTrails.Controllers
     /// <summary>
     /// This is a first pass at extracting data off the Olympic National Park Website and returning it to a view
     /// </summary>
+    /// TODO: Check for any valuable code and delete controller
     public class TrailReportController : Controller
     {
 
@@ -25,8 +26,9 @@ namespace MyTrails.Controllers
         /// Imports the Olympic National Park Trail Condtions website, parses conditions into a View Model and returns them on a page
         /// </summary>
         /// <returns></returns>
-        public async Task<ActionResult> Conditions()
+        public async Task<ActionResult> Import()
         {
+            ///TODO:Make Async
             List<TrailConditions> ConditionsList = new List<TrailConditions>();
             //Setup Browser and download page 
             var baseUrl = new Uri("https://www.nps.gov/olym/planyourvisit/wilderness-trail-conditions.htm");

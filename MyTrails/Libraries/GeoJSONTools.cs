@@ -25,6 +25,13 @@ namespace MyTrails.Libraries
         }
 
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// <summary>   A geo JSON tools. </summary>
+    ///
+    /// <remarks>   Michael, 2/10/2019. </remarks>
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+
     public class GeoJSONTools
     {
         ApplicationDbContext db = new ApplicationDbContext();
@@ -34,7 +41,7 @@ namespace MyTrails.Libraries
         }
 
         /// <summary>
-        /// Converts text string of geography and converts it to 
+        /// Removes text from a Sql LineString Geometry string and returns and Array of ordered coordinates
         /// </summary>
         /// <param name="spatial"></param>
         /// <returns></returns>
@@ -59,8 +66,8 @@ namespace MyTrails.Libraries
         public void InputGeoJson1(string filename)
         {
 
-            dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"C:\Users\Michael\Desktop\Programming\Projects\OlympicTrailData.Json"));
-            //dynamic trailStore = new ExpandoObject();
+            dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"/App_data/OlympicTrailData.Json"));
+
             var trailStore = new List<Trail>();
             var trailFeatures = new List<string>();
 
@@ -83,12 +90,11 @@ namespace MyTrails.Libraries
 
                 }
             }
-            Console.Read();
-
         }
 
         /// <summary>
-        /// Imports data from a geoJson
+        /// Updates Trails in database with geospatial data Imported 
+        /// from a geoJson
         /// </summary>
         public void ImportGeoJson2()
         {
@@ -118,8 +124,6 @@ namespace MyTrails.Libraries
                 {
                     otherTrails.Add(ts);
                 }
-
-                // Console.Read();
             }
             db.SaveChanges();
 
@@ -161,7 +165,7 @@ namespace MyTrails.Libraries
 
 
         /// <summary>
-        /// Returns "LineString" if pointcount is > 1 else returns "Point"
+        /// Returns "LineString" if pointcount > 1 else returns "Point"
         /// </summary>
         /// <param name="pointcount"></param>
         /// <returns></returns>

@@ -20,8 +20,12 @@ namespace MyTrails.Libraries
         /// </summary>
         public static string CleanFromHTML(string stringToClean)
         {
+            /*Remove Element Tags*/
             Regex HTMLCommentRegEx = new Regex("<[^>]*>", RegexOptions.IgnoreCase);
+            /*Remove any newlines*/
             stringToClean = HTMLCommentRegEx.Replace(HttpUtility.HtmlDecode(stringToClean).Replace("\n", String.Empty), "");
+            /*Remove any null character. Was having issues with \0 not equalling \0 in two separate strings*/
+            stringToClean = stringToClean.Replace("\0", string.Empty);
             return stringToClean;
         }
         //Need to account for oddities in elevations or mileagelike multiple mileage sets
