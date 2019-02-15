@@ -4,65 +4,77 @@
     ViewBag.Title = "Index";
 }
 
+
+
+@*This is first stage dmeonstrating the combination of map data and trail conditions. At this point it was time to pick up a front-end framework to simplify the work*@
 <h2>Index</h2>
+@using (Html.BeginForm("UpdateNPSConditions", "Condition"))
+{
+
+    <input type="submit" value="Check for new conditions" />
+
+}
 
 <div class="row">
-    <div class=" = col-md-6">
-        @{
-            var zones = Model.Select(x => x.Trail.Zone).Distinct();
-        }
-        @for (int i = 0; i < zones.Count(); i++)
-        {
-            <h3 data-toggle="collapse" data-target=".zone-@i">@zones.ElementAt(i)</h3>
-
-            var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
-            foreach (var item in trailName)
+    <div class="col-md-6 mapinfo">
+        <div class="trails">
+            @{
+                var zones = Model.Select(x => x.Trail.Zone).Distinct();
+            }
+            @for (int i = 0; i < zones.Count(); i++)
             {
+                <h3 data-toggle="collapse" data-target=".zone-@i">@zones.ElementAt(i)</h3>
                 <div class="zone-@i collapse">
-                    <h4 class="multi-select" data-featurenumbers="[]" data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
+                    @{var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
+                    }
+                    @foreach (var item in trailName)
+                    {
 
-                    <table class="table collapse conditions-@item.Replace(" ","")">
-                        <tr>
+                        <h4 class="multi-select" data-featurenumbers="[]" data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
 
-                            <th>
-                                Snow
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Description)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.Date)
-                            </th>
-                            <th></th>
-                        </tr>
-                        @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
-                        {
-
-
+                        <table class="table collapse conditions-@item.Replace(" ","")">
                             <tr>
 
-                                <td>
-                                    @Html.DisplayFor(modelItem => condition.PercentSnowCover)
-
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => condition.Description)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => condition.Date)
-                                </td>
-
+                                <th>
+                                    Snow
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Date)
+                                </th>
+                                <th></th>
                             </tr>
-                        }
-                    </table>
+                            @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
+                            {
+
+
+                                <tr>
+
+                                    <td>
+                                        @Html.DisplayFor(modelItem => condition.PercentSnowCover)
+
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => condition.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => condition.Date)
+                                    </td>
+
+                                </tr>
+                            }
+                        </table>
+                    }
                 </div>
+
             }
-
-        }
-
+        </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6 mapinfo">
         <div id="map" class="condition-index-map"></div>
+        <div id="infofield"></div>
     </div>
 </div>
 <script src="~/Credentials/Credentials.js"></script>
