@@ -18,6 +18,10 @@ using static MyTrails.Libraries.GeoJSONTools;
 
 namespace MyTrails.Controllers
 {
+    /// <summary>   A controller for handling trails. </summary>
+    /// TODO: Isolate this controller
+    /// <remarks>   Michael, 2/10/2019. </remarks>
+
     public class TrailController : Controller
     {
 
@@ -62,6 +66,7 @@ namespace MyTrails.Controllers
             return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList()));
         }
 
+        /// TODO: COmplete method for combining json trail section s and saving them under a trail
         /// <summary>
         /// Incomplete method for combining the selected trail form the db and trail sections from JSON
         /// </summary>
@@ -81,8 +86,6 @@ namespace MyTrails.Controllers
 
 
         // POST: Trail/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,TrailName,Zone,Description,Elevation,Miles,InfoHTMLLink")] Trail trail)
@@ -169,8 +172,9 @@ namespace MyTrails.Controllers
             return new EmptyResult();
         }
 
+    
         /// <summary>
-        /// Imports trails and conditions to the db from the Olympic Naitonal Park trail conditions 
+        /// Imports trails and conditions to the db from the Olympic Naitonal Park trail conditions for first time run
         /// </summary>
         /// <returns></returns>
         public ActionResult ImportOlympicTrails()
@@ -273,10 +277,16 @@ namespace MyTrails.Controllers
         }
 
         /// <summary>
-        /// Finds a Trail in the DB with the same TrailName as the received trailSectionName parameter and returns its notes and geometry as JSON
+        /// Finds a Trail in the DB with the same TrailName as the received trailSectionName parameter
+        /// and returns its notes and geometry as JSON.
         /// </summary>
-        /// <param name="trailSectionName"></param>
-        /// <returns></returns>
+        ///
+        /// <remarks>   Michael, 2/15/2019. </remarks>
+        ///
+        /// <param name="trailSectionName"> . </param>
+        ///
+        /// <returns>   The database trail data. </returns>
+
         public string GetDbTrailData(string trailSectionName)
         {
             //For testing without a name parameter
