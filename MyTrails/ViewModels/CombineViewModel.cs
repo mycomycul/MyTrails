@@ -12,16 +12,20 @@ namespace MyTrails.ViewModels
     /// </summary>
     public class CombineViewModel
     {
+        public List<string> ExistingTrails { get; set; }
         public List<string> Trails { get; set; }
         public List<string> TrailSections { get; set; }
+
 
         public CombineViewModel()
         {
         }
-        public CombineViewModel(List<string> trails, List<string> trailSections)
+        public CombineViewModel(List<string> trails, List<string> trailSections, List<string> existingTrails)
         {
+
             Trails = trails;
             TrailSections = trailSections;
+            ExistingTrails = existingTrails;
         }
     }
 }
