@@ -32,7 +32,7 @@ namespace MyTrails.Controllers
         // GET: Trail
         public ActionResult Index()
         {
-            var vm = db.Trails.ToList();
+            var vm = db.Trails.OrderBy(x => x.TrailName).ToList();
             return View(vm);
         
         }
@@ -51,6 +51,8 @@ namespace MyTrails.Controllers
 
             //Get the names of all trails in the db without a trailsection.  If no trailsection, Automatically adding Geometry to the Db didn't work
             var Trails = db.Trails.Where(x => x.TrailSections.Count < 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
+            var existingTrails = db.Trails.Where(x => x.TrailSections.Count >= 1).OrderBy(q => q.TrailName).Select(n => n.TrailName).ToList();
+
 
             //Gets the names of features in the JSON without db entries by checking for each name in the db
             List<string> trailNames = new List<string>();
@@ -64,7 +66,7 @@ namespace MyTrails.Controllers
             }
 
 
-            return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList()));
+            return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList(),existingTrails));
         }
 
         /// TODO: Complete method for combining json trail section s and saving them under a trail
@@ -272,13 +274,6 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
-
-        public string GetJsonTrailDataFromJson(string trailSectionName)
-        {
-            var trailSections = GetTrailDataFromJson(trailSectionName);
-            return (JsonConvert.SerializeObject(trailSections));
-        }
-
         ///TODO:Convert system to RESTFul Api Output, client and server
         /// TODO: api/trail/json/id should return json version
         /// <summary>
@@ -287,7 +282,7 @@ namespace MyTrails.Controllers
         /// </summary>
         /// <param name="trailSectionName"></param>
         /// <returns></returns>
-        public List<SingleTrailSection> GetTrailDataFromJson(string trailSectionName)
+        public string GetTrailDataFromJson(string trailSectionName)
         {
             dynamic features = trailData["features"];
             try
@@ -307,13 +302,18 @@ namespace MyTrails.Controllers
                     st.Add(t);
                 }
 
-                return st;
+                var q = JsonConvert.SerializeObject(new { data = st, status = "ok" });
+                return JsonConvert.SerializeObject(new { data = st, status="ok"});
+
+
+
+                            
             }
             catch (Exception e)
             {
                 //return e.Message;
                 //return new EmptyResult()
-                return new List<SingleTrailSection>();
+                    return JsonConvert.SerializeObject(new {messages = new[] { e.Message }, status="error"});
             }
         }
 
@@ -345,7 +345,7 @@ namespace MyTrails.Controllers
                 //Geography uses extension method provided by GeoJSONTools
                 FullTrail.Add(new SingleTrailSection(geometrySection.Geography.AsArray(), geometrySection.ShortDescription));
             }
-            return JsonConvert.SerializeObject(FullTrail);
+            return JsonConvert.SerializeObject(new { status = "ok", data = FullTrail });
         }
 
         protected override void Dispose(bool disposing)
