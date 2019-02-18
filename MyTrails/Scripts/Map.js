@@ -40,13 +40,13 @@ function GetTrailData($geoDataNameElement) {
         dataType: 'json',
         success: function (result) {
             //if geospatial data was found
-            if (result.length > 0) {
+            if (result.status === "ok" && result.data.length>0) {
                 //for each set of coordinates with the same name in the geojson data
-                for (var k = 0; k < result.length; k++) {
+                for (var k = 0; k < result.data.length; k++) {
                     //Take received array of numeric coordinates and convert them to an array of google points
-                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
+                    let latLng = CreateGoogleLatLngFromArray(result.data[k].Geometry);
                     //Create a marker or polyline from the google points
-                    let mapFeature = createMapFeature(latLng, result[k].Note);
+                    let mapFeature = createMapFeature(latLng, result.data[k].Note);
                     //Save the new fature to an array of features that can be added and removed from the map
                     mapFeatures.push(mapFeature);
                     //Update the array of trail features associated with the the selected "GeoData" trail name
@@ -63,6 +63,40 @@ function GetTrailData($geoDataNameElement) {
     });
     return true;
 }
+
+function GetExistingTrails(trailname) {
+    $.ajax({
+        url: "/Trail/GetTrail",
+        data: { trailSectionName: trailname },
+        dataType: 'json',
+        success: function (result) {
+            //if geospatial data was found
+            if (result.status === "ok") {
+
+                
+                //for each set of coordinates with the same name in the geojson data
+                for (var k = 0; k < result.data.length; k++) {
+                    //Take received array of numeric coordinates and convert them to an array of google points
+                    let latLng = CreateGoogleLatLngFromArray(result.data[k].Geometry);
+                    //Create a marker or polyline from the google points
+                    let mapFeature = createMapFeature(latLng, result.data[k].Note, "#ff0000");
+                    //Save the new fature to an array of features that can be added and removed from the map
+                    mapFeatures.push(mapFeature);
+                    //Update the array of trail features associated with the the selected "GeoData" trail name
+
+                    let featureNumbers = $('#existingtrails').data("featurenumbers");
+                    featureNumbers.push(mapFeatures.length - 1);
+                    $('#existingtrails').data("featurenumbers", featureNumbers);
+                }
+            }
+            else {
+                alert("No valid map data was available");
+            }
+        }
+    });
+    return true;
+}
+
 //Get JSON Trail Section Coordinates
 function GetJsonTrailData($geoDataNameElement) {
 
@@ -70,18 +104,18 @@ function GetJsonTrailData($geoDataNameElement) {
         trailSectionName: $geoDataNameElement.text()
     };
     $.ajax({
-        url: "GetJsonTrailDataFromJson",
+        url: "GetTrailDataFromJson",
         data: data,
         dataType: 'json',
         success: function (result) {
             //if geospatial data was found
-            if (result.length > 0) {
+            if (result.status === "ok") {
                 //for each set of coordinates with the same name in the geojson data
-                for (var k = 0; k < result.length; k++) {
+                for (var k = 0; k < result.data.length; k++) {
                     //Take received array of numeric coordinates and convert them to an array of google points
-                    let latLng = CreateGoogleLatLngFromArray(result[k].Geometry);
+                    let latLng = CreateGoogleLatLngFromArray(result.data[k].Geometry);
                     //Create a marker or polyline from the google points
-                    let mapFeature = createMapFeature(latLng, result[k].Note);
+                    let mapFeature = createMapFeature(latLng, result.data[k].Note);
                     //Save the new fature to an array of features that can be added and removed from the map
                     mapFeatures.push(mapFeature);
                     //Update the array of trail features associated with the the selected "GeoData" trail name
@@ -98,6 +132,8 @@ function GetJsonTrailData($geoDataNameElement) {
     });
     return true;
 }
+
+
 
 //Remove google feature associated with the received element
 function removeFeatureFromMap(sectionToRemove) {
@@ -115,13 +151,13 @@ function displayFeatureOnMap($thisSection) {
     }
 }
 
-function createMapFeature(googlePoints, title) {
+function createMapFeature(googlePoints, title, featureColor) {
     var mapFeature;
     //If data for a line was received create a Google Polyline
     if (googlePoints.length > 1) {
         mapFeature = new google.maps.Polyline({
             path: googlePoints,
-            strokeColor: "#00ff00",
+            strokeColor: featureColor || "#00ff00",
             strokeOpacity: 0.8,
             strokeWeight: 8
         });

@@ -49,7 +49,17 @@
 
 
 <div id="map" class="map trail-combine-map"></div>
+<div id="existingtrails" data-featurenumbers="[]">
 
+    @foreach (var item in Model.ExistingTrails)
+    {
+        if (item == Model.ExistingTrails.Last())
+        { @item
+        }
+        else{ @item @:,
+        }
+    }
+</div>
 
 <script src="~/Credentials/Credentials.js"></script>
 @*<script>
@@ -63,3 +73,12 @@
 
 @Scripts.Render("~/bundles/trailcombine")
 @Scripts.Render("~/bundles/map")
+
+<script type="text/javascript">
+    var existing = $('#existingtrails').text().split(",");
+    existing.map(function (item) {
+        GetExistingTrails(item);
+    })
+    displayFeatureOnMap($('#existingtrails'));
+    //alert(existingTrails);
+</script>

@@ -29,6 +29,8 @@ $(function () {
             }
         });
     });
+
+
 });
 
 
@@ -58,6 +60,8 @@ function submitCombine() {
             }
             else {
                 //TODO: Add code for removing elements from select lists after combining
+                $("li.multi-select.selected-list-item").remove();
+                $('li.single-select.selected-list-item').remove();
                 alert("Success");
             }
         }

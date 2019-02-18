@@ -66,7 +66,7 @@ namespace MyTrails.Controllers
             }
 
 
-            return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList(),existingTrails));
+            return View(new CombineViewModel(Trails, trailNames.Distinct().OrderBy(x => x).ToList(),existingTrails.ToArray()));
         }
 
         /// TODO: Complete method for combining json trail section s and saving them under a trail
@@ -330,12 +330,12 @@ namespace MyTrails.Controllers
         /// <param name="trailSectionName"> . </param>
         ///
         /// <returns>   The database trail data. </returns>
-        
+        [ValidateInput(false)]
         public string GetTrail(string trailSectionName)
         {
             //For testing without a name parameter
             //var dbTrail = db.Trails.Where(m => m.TrailSections.Count > 0).First();
-
+            trailSectionName = trailSectionName.Replace("\n", "").Trim();
             //Query the db for trails using the received trailSectionName
             var dbTrail = db.Trails.Where(m => m.TrailName == trailSectionName).First();
             List<SingleTrailSection> FullTrail = new List<SingleTrailSection>();

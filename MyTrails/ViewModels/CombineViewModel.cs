@@ -12,7 +12,7 @@ namespace MyTrails.ViewModels
     /// </summary>
     public class CombineViewModel
     {
-        public List<string> ExistingTrails { get; set; }
+        public string[] ExistingTrails { get; set; }
         public List<string> Trails { get; set; }
         public List<string> TrailSections { get; set; }
 
@@ -20,7 +20,7 @@ namespace MyTrails.ViewModels
         public CombineViewModel()
         {
         }
-        public CombineViewModel(List<string> trails, List<string> trailSections, List<string> existingTrails)
+        public CombineViewModel(List<string> trails, List<string> trailSections, string[] existingTrails)
         {
 
             Trails = trails;
