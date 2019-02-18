@@ -92,27 +92,28 @@ namespace MyTrails.Libraries
             }
         }
 
-        /// <summary>
-        /// Updates Trails in database with geospatial data Imported 
-        /// from a geoJson
-        /// </summary>
-        public void ImportGeoJson2()
+        /// <summary> Goes through a set of geoJSON features, looks for them in the database by trailname and adds geometry to db if found</summary>
+        ///
+        /// <remarks>   Michael, 2/17/2019. </remarks>
+        ///
+        /// <param name="geoJsonSource">Receives location of geoJson string</param>
+        public void ImportGeoJsonDataToDB(string geoJsonSource = @"~/App_Data/OlympicTrailData.Json")
         {
+            //For Loggin
+            string unfoundTrailNames = "Trail not found in db: ";
 
-            IList<TrailSection> otherTrails = new List<TrailSection>();
-
-
-            JObject t = JObject.Parse(File.ReadAllText(@"~/App_Data/OlympicTrailData.Json")) as JObject;
+            JObject t = JObject.Parse(File.ReadAllText(geoJsonSource)) as JObject;
+            //Allow the use of dynamic json targeting
             dynamic traildata = t;
             var wkid = traildata.spatialReference.wkid;
             foreach (dynamic trail in traildata.features)
             {
-                string trailName = trail.attributes.TRLNAME;
-                var ts = CreateTrailSection(trailName, trail, wkid);
-
                 //Check if a matching trail name in the database exists and if so add current trail section to trail
+                string trailName = trail.attributes.TRLNAME;                          
                 if (db.Trails.Where(x => x.TrailName.ToUpper() == trailName).Any())
                 {
+                    
+                    var ts = new TrailSection(trail, wkid);
                     var currentTrail = db.Trails.Where(x => x.TrailName.ToUpper() == trailName).First();
                     if (currentTrail.TrailSections.Count < 1)
                     {
@@ -122,63 +123,31 @@ namespace MyTrails.Libraries
                 }
                 else
                 {
-                    otherTrails.Add(ts);
+                    unfoundTrailNames += (trailName + ": ");
                 }
             }
             db.SaveChanges();
-
         }
 
-
         /// <summary>
-        /// Takes a dynamic feature parsed from JSON along with a trailname and wkid and creates a TrailSection
+        /// Receives GeoJSON trail object and returns a Well-Known Text geometry string
         /// </summary>
-        /// <param name="trailname"></param>
-        /// <param name="trail"></param>
-        /// <param name="wkid"></param>
-        /// <returns></returns>
-        public static TrailSection CreateTrailSection(string trailname, dynamic trail, string wkid)
+        /// <remarks>Only returns points and LineStrings</remarks>
+        /// <param name="trail">Individual Trail Feature with attributes extracted from GeoJSON </param>
+        /// <returns>Well-Known-Text Geometry String</returns>
+        public static string CreateWKT(dynamic trail)
         {
-            //Check if this should be a point or line
-            string LineType = GeometryType(trail.geometry.paths[0].Count);
-
+            string lineType = trail.geometry.paths[0].Count > 1 ? "LineString" : "Point";
             //Create geometry string for creating GEOSpatial geography in SQL Server
-            string geometryString = LineType + " (";
+            string wKTString = lineType + " (";
             foreach (dynamic point in trail.geometry.paths[0])
             {
-                geometryString += (string)point[0] + " " + (string)point[1] + ",";
+                wKTString += (string)point[0] + " " + (string)point[1] + ",";
             }
-            //Remove last comma and replace with a closing parenthese
-            geometryString = geometryString.Remove(geometryString.Length - 1);
-            geometryString += ")";
-            //Build new trial section
-            TrailSection ts = new TrailSection()
-            {
-                Id = trail.attributes.FEATUREID,
-                ShortDescription = trail.attributes.TRLNAME,
-                Geography = DbGeography.FromText(geometryString, Convert.ToInt32(wkid)),
-                Status = trail.attributes.TRLSTATUS
-            };
-
-            return ts;
-        }
-
-
-        /// <summary>
-        /// Returns "LineString" if pointcount > 1 else returns "Point"
-        /// </summary>
-        /// <param name="pointcount"></param>
-        /// <returns></returns>
-        public static string GeometryType(int pointcount)
-        {
-            if (pointcount > 1)
-            {
-                return "LineString";
-            }
-            else
-            {
-                return "Point";
-            }
+            //Remove last comma and replace with a closing parentheses
+            wKTString = wKTString.Remove(wKTString.Length - 1);
+            wKTString += ")";
+            return wKTString;
         }
 
         /// <summary>
