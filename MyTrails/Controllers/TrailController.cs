@@ -74,13 +74,25 @@ namespace MyTrails.Controllers
         /// <param name="trailNameInDb"></param>
         /// <param name="trailFeatureNames"></param>
         /// <returns></returns>
-        [HttpPost]
-        public ActionResult ManuallyAddJsonToDb(string trailNameInDb, string[] trailFeatureNames)
-        {
-            dynamic features = trailData["features"];
-            var jData = features.Where;
-            return new EmptyResult();
-        }
+        //[HttpPost]
+        //public ActionResult ManuallyAddJsonToDb(string trailNameInDb, string[] trailFeatureNames)
+        //{
+        //    dynamic features = trailData["features"];
+        //    var Trail = db.Trails.Where(x => x.TrailName.ToUpper() == trailNameInDb);
+
+        //    foreach (var trailFeatureName in trailFeatureNames)
+        //    {
+        //        var newTrailFeature = features;
+        //    }
+        //    var ts = new TrailSection(trail, wkid);
+        //    var currentTrail = db.Trails.Where(x => x.TrailName.ToUpper() == trailName).First();
+        //    if (currentTrail.TrailSections.Count < 1)
+        //    {
+        //        currentTrail.Status = ts.Status;
+        //    }
+        //    currentTrail.TrailSections.Add(ts);
+        //    return new EmptyResult();
+        //}
 
 
 
@@ -182,7 +194,7 @@ namespace MyTrails.Controllers
         public ActionResult ImportJSONtrail()
         {
             GeoJSONTools geoTools = new GeoJSONTools();
-            geoTools.ImportGeoJson2();
+            geoTools.ImportGeoJsonDataToDB();
 
             return new EmptyResult();
         }
@@ -255,7 +267,8 @@ namespace MyTrails.Controllers
             var trailSections = GetTrailDataFromJson(trailSectionName);
             return (JsonConvert.SerializeObject(trailSections));
         }
-        
+
+        ///TODO:Convert system to RESTFul Api Output, client and server
         /// <summary>
         /// Extracts geometry and notes for all trail sections in the GeoJson data that 
         /// have the same name and returns them as Json
@@ -270,7 +283,8 @@ namespace MyTrails.Controllers
                 //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
                 dynamic trailSections = (from s in features as IEnumerable<dynamic>
                                      where s.attributes.TRLNAME == trailSectionName
-                                     select new { Geometry = s.geometry.paths[0], Note = s.attributes.NOTES}).ToList();
+                                     select new { Geometry = s.geometry.paths[0],
+                                                    Note = s.attributes.NOTES}).ToList();
                 List<SingleTrailSection> st = new List<SingleTrailSection>();
                 foreach (var feature in trailSections)
                 {
@@ -288,6 +302,37 @@ namespace MyTrails.Controllers
                 //return e.Message;
                 //return new EmptyResult()
                 return new List<SingleTrailSection>();
+            }
+        }
+
+
+        /// <summary>
+        /// Extracts all of the features by a name from a geoJSON set
+        /// </summary>
+        /// <param name="trailFeatureName">Trail Feature to look retrieve</param>
+        /// <param name="returnJson">Set true to return json string instead of dynamic object: Default false</param>
+        /// <returns></returns>
+        public dynamic GetJsonTrailFromGeoJson(string trailFeatureName, bool returnJson = false)
+        {
+            dynamic features = trailData["features"];
+            //Convert received <trailSectionName> case to match JSON feature's Uppercase name
+            trailFeatureName = trailFeatureName.ToUpper();
+            try
+            {
+                //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
+                dynamic trailSections = (from s in features as IEnumerable<dynamic>
+                                         where s.attributes.TRLNAME == trailFeatureName
+                                         select s);
+                if (returnJson)
+                {
+                    return JsonConvert.SerializeObject(trailSections);
+                }
+                return trailSections;
+            }
+            catch (Exception e)
+            {
+                var r = e.Message;
+                return "Failed to Get trail";
             }
         }
 
