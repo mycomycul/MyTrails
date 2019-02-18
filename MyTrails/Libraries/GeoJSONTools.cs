@@ -34,7 +34,10 @@ namespace MyTrails.Libraries
 
     public class GeoJSONTools
     {
+        static string geoJsonSource = @"/App_Data/OlympicTrailData.Json";
         ApplicationDbContext db = new ApplicationDbContext();
+
+
         public void AddElevation()
         {
 
@@ -92,12 +95,17 @@ namespace MyTrails.Libraries
             }
         }
 
-        /// <summary> Goes through a set of geoJSON features, looks for them in the database by trailname and adds geometry to db if found</summary>
+
+
+        /// <summary>
+        /// AutoDB Population Tool - Add json data to db
+        /// Goes through a set of geoJSON features, looks for them in the database by trailname and adds geometry to db if found
+        /// </summary>
         ///
         /// <remarks>   Michael, 2/17/2019. </remarks>
         ///
         /// <param name="geoJsonSource">Receives location of geoJson string</param>
-        public void ImportGeoJsonDataToDB(string geoJsonSource = @"~/App_Data/OlympicTrailData.Json")
+        public void ImportGeoJsonDataToDB()
         {
             //For Loggin
             string unfoundTrailNames = "Trail not found in db: ";
@@ -129,13 +137,15 @@ namespace MyTrails.Libraries
             db.SaveChanges();
         }
 
+
+
         /// <summary>
-        /// Receives GeoJSON trail object and returns a Well-Known Text geometry string
+        /// Receives GeoJSON trail feature and returns a Well-Known Text geometry string
         /// </summary>
         /// <remarks>Only returns points and LineStrings</remarks>
         /// <param name="trail">Individual Trail Feature with attributes extracted from GeoJSON </param>
         /// <returns>Well-Known-Text Geometry String</returns>
-        public static string CreateWKT(dynamic trail)
+        public static string CreateWktFromJson(dynamic trail)
         {
             string lineType = trail.geometry.paths[0].Count > 1 ? "LineString" : "Point";
             //Create geometry string for creating GEOSpatial geography in SQL Server
@@ -150,6 +160,49 @@ namespace MyTrails.Libraries
             return wKTString;
         }
 
+
+        /// <summary>
+        /// Extracts all features with the provided name from Olympic National Park geoJSON set. 
+        /// For importing data into other data or extracting from json db
+        /// </summary>
+        /// <remarks>2/17/19</remarks>
+        /// <param name="trailFeatureName">UpperCase trail feature names</param>
+        /// <param name="returnJson">Set true to return json string instead of dynamic object: Default false</param>
+        /// <returns></returns>
+        public static dynamic GetTrailFromGeoJson(string trailFeatureName, out string wkid, bool returnJson = false )
+        {
+
+            JObject t = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
+            wkid = t["spatialReference"]["wkid"].ToString();
+            //Allow the use of dynamic json targeting
+            dynamic features = t["features"];
+            //Convert received <trailSectionName> case to match JSON feature's Uppercase name
+            trailFeatureName = trailFeatureName.ToUpper();
+            try
+            {
+                //Select the geometry and notes from all sections in the GeoJson data with the same name as the received string
+                dynamic trailFeatures = (from s in features as IEnumerable<dynamic>
+                                         where s.attributes.TRLNAME == trailFeatureName
+                                         select s);
+                if (returnJson)
+                {
+                    return JsonConvert.SerializeObject(trailFeatures);
+                }
+                return trailFeatures;
+            }
+            catch (Exception e)
+            {
+                var r = e.Message;
+                return "Failed to Get trail";
+            }
+        }
+        public static dynamic GetTrailFromGeoJson(string trailFeatureName, bool returnJson = false)
+        {
+            dynamic trailfeatures = GetTrailFromGeoJson(trailFeatureName, out string wkid, returnJson);
+            return trailfeatures;
+        }
+
+        ///TODO: ELiminate this class and update scripts to handle json geometry
         /// <summary>
         /// Used for organizing data for returning to a map view
         /// Must be nested in a collection to be parsed on View
