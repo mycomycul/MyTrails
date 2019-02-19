@@ -35,7 +35,7 @@ function GetTrailData($geoDataNameElement) {
         trailSectionName: $geoDataNameElement.text()
     };
     $.ajax({
-        url: "/Trail/GetDbTrailData",
+        url: "/Trail/GetTrail",
         data: data,
         dataType: 'json',
         success: function (result) {

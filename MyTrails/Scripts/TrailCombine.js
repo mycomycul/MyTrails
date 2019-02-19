@@ -49,11 +49,17 @@ function submitCombine() {
     };
 
     $.ajax({
-        url: "CombineGeoJsonWithDb",
+        url: "ManuallyAddJsonToDb",
         data: data,
         method: "POST",
         success: function (result) {
-            alert(result);
+            if (result.status !== "ok") {
+                alert(result.messages.join());
+            }
+            else {
+                //TODO: Add code for removing elements from select lists after combining
+                alert("Success");
+            }
         }
     });
     return true;
