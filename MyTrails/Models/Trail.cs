@@ -55,6 +55,7 @@ namespace MyTrails.Models
         }
     }
 
+    /// <summary>One of the features extracted from geoJSON that makes up a full trail</summary>
     public class TrailSection
     {
         [Key]
@@ -68,6 +69,18 @@ namespace MyTrails.Models
         public string TrailID { get; set; }
         public virtual Trail Trail { get; set; }
 
+        public TrailSection()
+        {
+
+        }
+        
+        public TrailSection(dynamic trail, string wkid)
+        {
+            Id = trail.attributes.FEATUREID;
+            ShortDescription = trail.attributes.TRLNAME;
+            Geography = DbGeography.FromText(GeoJSONTools.CreateWktFromJson(trail), Convert.ToInt32(wkid));
+            Status = trail.attributes.TRLSTATUS;
+        }
 
     }
 }
