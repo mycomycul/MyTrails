@@ -258,9 +258,6 @@
     </Content>
     <Content Include="MapData\OlympicTrailData.json" />
     <Content Include="App_Data\OlympicTrailData.json" />
-    <Content Include="ClassDiagram1.cd" />
-    <Content Include="ClassDiagram2.cd" />
-    <Content Include="ClassDiagram3.cd" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
