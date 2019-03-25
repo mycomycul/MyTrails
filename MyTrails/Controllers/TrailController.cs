@@ -19,8 +19,8 @@ using static MyTrails.Libraries.GeoJSONTools;
 
 namespace MyTrails.Controllers
 {
-    /// <summary>   A controller for handling trails. </summary>
-    /// TODO: Isolate this controller
+    /// <summary>Importing, viewing and updating logic</summary>
+    /// TODO: Reorganize and disassemble
     /// <remarks>   Michael, 2/10/2019. </remarks>
 
     public class TrailController : Controller
@@ -30,16 +30,46 @@ namespace MyTrails.Controllers
         private readonly JObject trailData = new JObject(JObject.Parse(System.IO.File.ReadAllText(System.Web.Hosting.HostingEnvironment.MapPath("~/App_Data/OlympicTrailData.Json"))) as JObject);
 
         // GET: Trail
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+            ViewBag.ZoneSortParm = sortOrder == "Zone" ? "Zone_Desc" : "Zone";
+            ViewBag.MilesSortParm = sortOrder == "Miles" ? "Miles_Desc" : "Miles";
+
+
+
             var vm = db.Trails.OrderBy(x => x.TrailName).ToList();
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    vm = vm.OrderByDescending(s => s.TrailName).ToList();
+                    break;
+                case "Zone":
+                    vm = vm.OrderBy(s => s.Zone).ThenBy(t => t.TrailName).ToList();
+                    break;
+                case "Zone_Desc":
+                    vm = vm.OrderByDescending(s => s.Zone).ThenBy(t => t.TrailName).ToList();
+                    break;
+                case "Miles":
+                    vm = vm.OrderBy(s => s.TotalMiles).ToList();
+                    break;
+                case "Miles_Desc":
+                    vm = vm.OrderByDescending(s => s.TotalMiles).ToList();
+                    break;
+                default:
+                    vm = vm.OrderBy(s => s.TrailName).ToList();
+                    break;
+
+
+            }
             return View(vm);
         
         }
 
 
         /// <summary>
-        /// IN the event that automatic pairing between trail names on the website and JSON Data fails
+        /// In the event that automatic pairing between trail names on the website and JSON Data fails
         /// THe Method selects Trails from the database without geospatial data and geospatial data without 
         /// matching trailnames in the db so they can be paired up on a manual pairing page
         /// </summary>
@@ -107,27 +137,7 @@ namespace MyTrails.Controllers
             }
         }
 
-
-
-
-
-        // POST: Trail/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TrailName,Zone,Description,Elevation,Miles,InfoHTMLLink")] Trail trail)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Trails.Add(trail);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(trail);
-        }
-
-        // GET: Trail/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string id)
         {
             if (id == null)
             {
@@ -141,12 +151,12 @@ namespace MyTrails.Controllers
             return View(trail);
         }
 
-        // POST: Trail/Edit/5
+        // POST: Condition/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,TrailName,Zone,Description,Elevation,Miles,InfoHTMLLink")] Trail trail)
+        public ActionResult Edit([Bind(Include = "TrailName,Zone,Description,Elevation,TotalMiles,InfoHTMLLink,Status,Agency,ShortDescription")] Trail trail)
         {
             if (ModelState.IsValid)
             {
@@ -156,9 +166,8 @@ namespace MyTrails.Controllers
             }
             return View(trail);
         }
-
-        // GET: Trail/Delete/5
-        public ActionResult Delete(int? id)
+        //GET: Trail/Delete/5
+        public ActionResult Delete(string id)
         {
             if (id == null)
             {
@@ -171,7 +180,6 @@ namespace MyTrails.Controllers
             }
             return View(trail);
         }
-
         // POST: Trail/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -201,7 +209,7 @@ namespace MyTrails.Controllers
 
         public ActionResult Map()
         {
-            return View();
+            return View("OLMap");
         }
 
         public ActionResult ImportJSONtrail()
@@ -274,7 +282,7 @@ namespace MyTrails.Controllers
             return RedirectToAction("Index");
         }
 
-        ///TODO:Convert system to RESTFul Api Output, client and server
+        ///TODO:Convert system to using data access in API COntroller organized as RESTful
         /// TODO: api/trail/json/id should return json version
         /// <summary>
         /// Extracts geometry and notes for all trail sections in the GeoJson data that 

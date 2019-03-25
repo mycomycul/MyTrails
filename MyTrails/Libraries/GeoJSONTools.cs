@@ -66,34 +66,7 @@ namespace MyTrails.Libraries
             return fullSpatialArray;
         }
 
-        public void InputGeoJson1(string filename)
-        {
 
-            dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"/App_data/OlympicTrailData.Json"));
-
-            var trailStore = new List<Trail>();
-            var trailFeatures = new List<string>();
-
-            for (int i = 0; i < trail["fields"].Count; i++)
-            {
-                trailFeatures.Add((string)trail["fields"][i]["name"]);
-            }
-            foreach (var item in trail["features"])
-            {
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    var currentTrail = item["attributes"];
-                    Trail newTrail = new Trail();
-                    //Trail newTrail = db.Trails.Where(x => x.TrailName.ToUpper == currentTrail["TRLNAME"])
-                    newTrail.Id = item["attributes"]["OBJECTID"];
-                    newTrail.TrailName = item["attributes"]["TRLNAME"];
-                    newTrail.Status = item["attributes"]["TRLSTATUS"];
-                    // newTrail.ShortDescription = item["attributes"]["NOTES"];
-                    trailStore.Add(newTrail);
-
-                }
-            }
-        }
 
 
 
@@ -222,6 +195,35 @@ namespace MyTrails.Libraries
             {
                 Geometry = geometry;
                 Note = note;
+            }
+        }
+
+        public void InputGeoJson1(string filename)
+        {
+
+            dynamic trail = JsonConvert.DeserializeObject<dynamic>(File.ReadAllText(@"/App_data/OlympicTrailData.Json"));
+
+            var trailStore = new List<Trail>();
+            var trailFeatures = new List<string>();
+
+            for (int i = 0; i < trail["fields"].Count; i++)
+            {
+                trailFeatures.Add((string)trail["fields"][i]["name"]);
+            }
+            foreach (var item in trail["features"])
+            {
+                using (ApplicationDbContext db = new ApplicationDbContext())
+                {
+                    var currentTrail = item["attributes"];
+                    Trail newTrail = new Trail();
+                    //Trail newTrail = db.Trails.Where(x => x.TrailName.ToUpper == currentTrail["TRLNAME"])
+                    newTrail.Id = item["attributes"]["OBJECTID"];
+                    newTrail.TrailName = item["attributes"]["TRLNAME"];
+                    newTrail.Status = item["attributes"]["TRLSTATUS"];
+                    // newTrail.ShortDescription = item["attributes"]["NOTES"];
+                    trailStore.Add(newTrail);
+
+                }
             }
         }
 

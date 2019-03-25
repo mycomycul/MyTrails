@@ -230,6 +230,10 @@
     <Compile Include="Migrations\201808250225304_InitialCreate.Designer.cs">
       <DependentUpon>201808250225304_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903250552344_AddUserToCondition.cs" />
+    <Compile Include="Migrations\201903250552344_AddUserToCondition.Designer.cs">
+      <DependentUpon>201903250552344_AddUserToCondition.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Condition.cs" />
@@ -237,6 +241,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Trail.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\TrailSection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
     <Compile Include="Startup.cs" />
@@ -244,6 +249,12 @@
     <Compile Include="ViewModels\TrailConditions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-MyTrails-20180525072617.mdf" />
+    <Content Include="App_Data\aspnet-MyTrails-20180525072617_log.ldf">
+      <DependentUpon>aspnet-MyTrails-20180525072617.mdf</DependentUpon>
+    </Content>
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Credentials\Credentials.js" />
@@ -251,14 +262,22 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="MapData\OlympicTrailData.json" />
     <Content Include="App_Data\OlympicTrailData.json" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap.min.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.min.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -270,12 +289,12 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\map.js" />
-    <Content Include="Scripts\mapindex.js" />
+    <Content Include="Scripts\site\map.js" />
+    <Content Include="Scripts\site\mapindex.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\trailcombine.js" />
+    <Content Include="Scripts\site\trailcombine.js" />
     <Content Include="SqlServerTypes\readme.htm" />
     <Content Include="SqlServerTypes\x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -325,8 +344,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\TrailReport\Import.cshtml" />
-    <Content Include="Views\Condition\Create.cshtml" />
     <Content Include="Views\Condition\Delete.cshtml" />
     <Content Include="Views\Condition\Details.cshtml" />
     <Content Include="Views\Condition\Edit.cshtml" />
@@ -334,23 +351,14 @@
     <Content Include="Views\Trail\ManuallyAddJsonToDb.cshtml" />
     <Content Include="Views\Trail\OLMap.cshtml" />
     <Content Include="Views\Trail\Index.cshtml" />
-    <Content Include="Views\Trail\MapIndex.cshtml" />
     <Content Include="Views\Shared\_Map.cshtml" />
     <Content Include="Views\Condition\Success.cshtml" />
     <Content Include="Views\Trail\Details.cshtml" />
+    <Content Include="Views\Trail\Edit.cshtml" />
+    <Content Include="Views\Trail\Delete.cshtml" />
+    <Content Include="Views\Condition\Create.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Trails\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -359,6 +367,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201808250225304_InitialCreate.resx">
       <DependentUpon>201808250225304_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903250552344_AddUserToCondition.resx">
+      <DependentUpon>201903250552344_AddUserToCondition.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

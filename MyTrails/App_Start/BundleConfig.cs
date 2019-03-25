@@ -15,11 +15,11 @@ namespace MyTrails
                         "~/Scripts/jquery.validate*"));
 
             bundles.Add(new ScriptBundle("~/bundles/trailcombine").Include(
-                                    "~/Scripts/trailcombine.js"));
+                                    "~/Scripts/site/trailcombine.js"));
 
 
             bundles.Add(new ScriptBundle("~/bundles/map").Include(
-                                    "~/Scripts/map.js"));
+                                    "~/Scripts/site/map.js"));
 
 
             // Use the development version of Modernizr to develop with and learn from. Then, when you're

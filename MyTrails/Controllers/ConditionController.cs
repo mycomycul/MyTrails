@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using HtmlAgilityPack;
+using Microsoft.AspNet.Identity;
 using MyTrails.Libraries;
 using MyTrails.Models;
 using ScrapySharp.Extensions;
@@ -29,6 +30,7 @@ namespace MyTrails.Controllers
         /// <remarks>   Michael, 2/15/2019. </remarks>
         ///
         /// <returns>   A response stream to send to the Success View. </returns>
+        /// TODO: Separate Update method from Olympic Page Schema
         [HttpPost]
         public ActionResult UpdateNPSConditions()
         {
@@ -122,6 +124,8 @@ namespace MyTrails.Controllers
         // GET: Condition/Create
         public ActionResult Create()
         {
+
+            ViewBag.Trails = db.Trails.OrderBy(t => t.TrailName).Select(x => new SelectListItem { Text = x.TrailName, Value = x.Id });
             return View();
         }
 
@@ -130,14 +134,16 @@ namespace MyTrails.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,PercentSnowCover,Description,Date")] Condition condition)
+        public ActionResult Create([Bind(Include = "PercentSnowCover,Description,Date,TrailId")] Condition condition)
         {
+            condition.UserId = User.Identity.GetUserId();
             if (ModelState.IsValid)
             {
                 db.Conditions.Add(condition);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.Trails = db.Trails.OrderBy(t => t.TrailName).Select(x => new SelectListItem { Text = x.TrailName, Value = x.Id });
 
             return View(condition);
         }

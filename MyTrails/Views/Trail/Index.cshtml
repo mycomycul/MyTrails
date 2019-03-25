@@ -8,21 +8,23 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.TrailName)
-        </th>
-        @*TODO: Create GPX Output for each trail*@
-
+            @Html.ActionLink("Trail Name", "Index", new {sortOrder = ViewBag.NameSortParm})
         @*<th>
-                Spatial
-            </th>*@
+            Spatial
+        </th>*@
         <th>
             @Html.DisplayNameFor(model => model.Description)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalMiles)
+            @Html.ActionLink("Miles", "Index", new { sortOrder = ViewBag.MilesSortParm })
+
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.ActionLink("Zone", "Index", new { sortOrder = ViewBag.ZoneSortParm })
+
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Agency)
@@ -33,59 +35,57 @@
         <th>
             @Html.DisplayNameFor(model => model.Elevation)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ShortDescription)
-        </th>
+
         <th></th>
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrailName)
-            </td>
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.TrailName)
+    </td>
 
-            @*@if (item.TrailSections.Count() > 0){
-                <td>
-                    @item.TrailSections[0].Geography.WellKnownValue.WellKnownText
-                </td>
-                    }*@
+    @*@if (item.TrailSections.Count() > 0){
+        <td>
+            @item.TrailSections[0].Geography.WellKnownValue.WellKnownText
+        </td>
+            }*@
 
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalMiles)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Agency)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InfoHTMLLink)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Elevation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ShortDescription)
-            </td>
-            <td>
-                @if (User.IsInRole("Admin"))
-                {
+    <td>
+        @Html.DisplayFor(modelItem => item.ShortDescription)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.TotalMiles)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Status)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Zone)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Agency)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.InfoHTMLLink)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Elevation)
+    </td>
+    <td>
+        @if (User.IsInRole("Admin"))
+        {
 
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
 
-                }
-                @Html.ActionLink("Details", "Details", new { id = item.Id })
-                @*TODO: Add Details Action to Trail Controller*@
-            </td>
-        </tr>
+        }
+        @Html.ActionLink("Details", "Details", new { id = item.Id })
+        @*TODO: Add Details Action to Trail Controller*@
+    </td>
+</tr>
     }
 
 </table>

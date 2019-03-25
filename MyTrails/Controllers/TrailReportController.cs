@@ -18,6 +18,7 @@ namespace MyTrails.Controllers
     /// This is a first pass at extracting data off the Olympic National Park Website and returning it to a view
     /// </summary>
     /// TODO: Check for any valuable code and delete controller
+    [Obsolete("Use Trail Controller. Retained temporarily for salvage purposes")]
     public class TrailReportController : Controller
     {
 

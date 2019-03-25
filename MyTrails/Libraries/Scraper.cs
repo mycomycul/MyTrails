@@ -14,10 +14,11 @@ namespace MyTrails.Libraries
 
 
 
-
-        ///<summary>
-        ///Removes comments and newlines from strings and replaces character codes
+        /// <summary>
+        ///Removes HTML or XML ELements and newlines from inner content
         /// </summary>
+        /// <param name="stringToClean">String of XML or HTML content</param>
+        /// <returns>Inner text content cleaned of XML or HTML markup</returns>
         public static string CleanFromHTML(string stringToClean)
         {
             /*Remove Element Tags*/
@@ -28,13 +29,20 @@ namespace MyTrails.Libraries
             stringToClean = stringToClean.Replace("\0", string.Empty);
             return stringToClean;
         }
-        //Need to account for oddities in elevations or mileagelike multiple mileage sets
+
+        //TODO:Need to account for oddities in elevations or mileagelike multiple mileage sets
+        /// <summary>
+        /// Extracts "miles" from a text  string and return
+        /// </summary>
+        /// <param name="milesElevation"></param>
+        /// <returns></returns>
         public static float? ExtractMiles(string milesElevation)
         {
             try
             {
-                milesElevation = milesElevation.Remove(milesElevation.IndexOf(" miles"));
-                return float.Parse(milesElevation);
+                var numbers = new String(milesElevation.Where(c => Char.IsDigit(c)).ToArray());
+                return float.Parse(String.Join(null,numbers));
+                
             }
             catch
             {

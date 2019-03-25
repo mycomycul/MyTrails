@@ -17,9 +17,7 @@ namespace MyTrails.Models
             return userIdentity;
         }
 
-        
-
-        
+         
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>

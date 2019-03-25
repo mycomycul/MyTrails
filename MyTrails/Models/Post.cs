@@ -5,11 +5,17 @@ using System.Web;
 
 namespace MyTrails.Models
 {
+
+    /// <summary>
+    /// Longer Posts or trip reports submitted by users
+    /// Not 
+    /// </summary>
     public class Post
     {
         public Post()
         {
-            this.Trails = new HashSet<Trail>();
+            throw new NotImplementedException();
+            //this.Trails = new HashSet<Trail>();
         }
         public string Id { get; set; }
         ///// <summary>

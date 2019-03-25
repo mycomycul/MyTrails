@@ -7,12 +7,15 @@
 
 
 @*This is first stage dmeonstrating the combination of map data and trail conditions. At this point it was time to pick up a front-end framework to simplify the work*@
+
 <h2>Index</h2>
-@using (Html.BeginForm("UpdateNPSConditions", "Condition"))
+
+@if (User.IsInRole("Admin"))
 {
-
-    <input type="submit" value="Check for new conditions" />
-
+    using (Html.BeginForm("UpdateNPSConditions", "Condition"))
+    {
+        <input type="submit" value="Check for new conditions" />
+    }
 }
 
 <div class="row">
@@ -80,9 +83,9 @@
 <script src="~/Credentials/Credentials.js"></script>
 <script const dataLocation="@Url.Action("GetTrail","Trail")"></script>
 
-@Scripts.Render("~/bundles/map")
+@*@Scripts.Render("~/bundles/map")*@
 
-<script src="~/Scripts/mapindex.js"></script>
+<script src="~/Scripts/site/mapindex.js"></script>
 
 
 @*@Scripts.Render("/bundles/trailcombine")*@
