@@ -8,7 +8,17 @@ var mapFeatures = [];
 var infowindow;
 
 (function (d) {
-    var file = 'https://maps.googleapis.com/maps/api/js?key=' + googlekey + '&callback=myMap';
+    let file;
+    //If an API key isn't provided, use the development API call.
+    if (typeof googlekey !== 'undefined') {
+        file =
+            "https://maps.googleapis.com/maps/api/js?key=" +
+            googlekey +
+            "&callback=myMap";
+    }
+    else {
+        file = "https://maps.googleapis.com/maps/api/js?callback=myMap";
+    }
     var ref = d.getElementsByTagName('script')[0];
     var js = d.createElement('script');
     js.src = file;
