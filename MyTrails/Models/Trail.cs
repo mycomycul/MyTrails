@@ -14,23 +14,27 @@ namespace MyTrails.Models
     public class Trail
     {
         public string Id { get; set; }
+        //NPS Properties scraped from website
         public string TrailName { get; set; }
         public string Zone { get; set; }
         public string Description { get; set; }
+        public string Elevation { get; set; }
         public float? TotalMiles { get; set; }
-        public string Status { get; set; }
-        public string Agency { get; set; }
         /// <summary>
         /// Link to information page on NPS.gov
         /// </summary>
         public string InfoHTMLLink { get; set; }
 
-        //NPS Properties
-        public string Elevation { get; set; }
+
+        public string Status { get; set; }
+        public string Agency { get; set; }
         public string ShortDescription { get; set; }
 
 
         public virtual ICollection<Post> Posts { get; set; }
+        /// <summary>
+        /// Sections of spatial data that have the same trailname and make up a single trail defined by the Federal Register
+        /// </summary>
         public virtual List<TrailSection> TrailSections { get; set; }
         public virtual List<Condition> Conditions { get; set; }
 
@@ -55,32 +59,4 @@ namespace MyTrails.Models
         }
     }
 
-    /// <summary>One of the features extracted from geoJSON that makes up a full trail</summary>
-    public class TrailSection
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public string Id { get; set; }
-        public string ShortDescription { get; set; }
-        public DbGeography Geography { get; set; }
-        public string Status { get; set; }
-
-
-        public string TrailID { get; set; }
-        public virtual Trail Trail { get; set; }
-
-        public TrailSection()
-        {
-
-        }
-        
-        public TrailSection(dynamic trail, string wkid)
-        {
-            Id = trail.attributes.FEATUREID;
-            ShortDescription = trail.attributes.TRLNAME;
-            Geography = DbGeography.FromText(GeoJSONTools.CreateWktFromJson(trail), Convert.ToInt32(wkid));
-            Status = trail.attributes.TRLSTATUS;
-        }
-
-    }
 }
