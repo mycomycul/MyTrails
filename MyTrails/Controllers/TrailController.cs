@@ -136,7 +136,7 @@ namespace MyTrails.Controllers
                 return Json(new { status = "error", messages = new[] { e.Message } });
             }
         }
-
+        [Authorize]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -155,6 +155,7 @@ namespace MyTrails.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "TrailName,Zone,Description,Elevation,TotalMiles,InfoHTMLLink,Status,Agency,ShortDescription")] Trail trail)
         {
