@@ -65,7 +65,7 @@ namespace MyTrails.Controllers
                     var scrapedConditionDescription = Scraper.CleanFromHTML(rowCells.ElementAt(3).InnerText);                    
                     var scrapedConditionDate = DateTime.Parse(Scraper.CleanFromHTML(rowCells.ElementAt(4).InnerText));
 
-                    if (scrapedConditionDate != trailcondition.Date)
+                    if (!trail.Conditions.Any(x => x.Date == scrapedConditionDate))
                     {
 
                         Condition condition = new Condition()
