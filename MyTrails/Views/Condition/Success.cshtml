@@ -1,7 +1,18 @@
 ﻿@model IEnumerable<MyTrails.Models.Condition>
 
-<h2>@Model.Count() Conditions sucessfully @ViewBag.Operation</h2>
+@if (Model.Count() > 1)
+{
+    <h2>@Model.Count() Conditions successfully @ViewBag.Operation</h2>
+}
+else if (Model.Count() == 1)
+{
+    <h2>@Model.Count() Condition successfully @ViewBag.Operation</h2>
+}
+else
+{
+    <h2>No Conditions @ViewBag.Operation</h2>
 
+}
 <table class="table">
     <tr>
         <th>
@@ -19,26 +30,27 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Trail.TrailName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PercentSnowCover)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Date)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Trail.TrailName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PercentSnowCover)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
 
 </table>
