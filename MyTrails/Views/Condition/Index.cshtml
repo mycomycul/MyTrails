@@ -17,7 +17,6 @@
         <input type="submit" value="Check for new conditions" />
     }
 }
-
 <div class="row">
     <div class="col-md-6 mapinfo">
         <div class="trails">
@@ -32,54 +31,61 @@
                     }
                     @foreach (var item in trailName)
                     {
-
                         <h4 class="multi-select" data-featurenumbers="[]" data-toggle="collapse" data-target=".conditions-@item.Replace(" ","")">@item</h4>
-
-                        <table class="table collapse conditions-@item.Replace(" ","")">
-                            <tr>
-
-                                <th>
-                                    Snow
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Description)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Date)
-                                </th>
-                                <th></th>
-                            </tr>
-                            @foreach (var condition in Model.Where(x => x.Trail.TrailName == item))
-                            {
-
-
-                                <tr>
-
-                                    <td>
-                                        @Html.DisplayFor(modelItem => condition.PercentSnowCover)
-
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => condition.Description)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => condition.Date)
-                                    </td>
-
-                                </tr>
-                            }
-                        </table>
                     }
                 </div>
-
             }
         </div>
     </div>
     <div class="col-md-6 mapinfo">
         <div id="map" class="condition-index-map"></div>
-        <div id="infofield"></div>
+        <div id="infofield">
+            @for (int i = 0; i < zones.Count(); i++)
+            {
+                var trailName = Model.Where(x => x.Trail.Zone == zones.ElementAt(i)).OrderBy(x => x.Trail.TrailName).Select(x => x.Trail.TrailName).Distinct();
+                
+                foreach (var item in trailName)
+                {
+                    <table class="table collapse conditions-@item.Replace(" ", "")">
+                        <tr>
+                            <th>
+                                Snow
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Date)
+                            </th>
+                            <th></th>
+                        </tr>
+                        <tr ><td colspan="3" class="text-center">@item</td></tr>
+                        @foreach (var condition in Model.Where(x => x.Trail.TrailName == item).OrderByDescending(x => x.Date))
+                        {
+                            <tr>
+
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.PercentSnowCover)
+
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.Description)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => condition.Date)
+                                </td>
+
+                            </tr>
+                        }
+                    </table>
+                }
+            }
+        </div>
+
+
     </div>
 </div>
+
 <script src="~/Credentials/Credentials.js"></script>
 <script const dataLocation="@Url.Action("GetTrail","Trail")"></script>
 
