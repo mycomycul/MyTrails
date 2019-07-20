@@ -25,12 +25,7 @@ $(function () {
                 if ($thisSection.data("featurenumbers").length === 0) GetTrailData($thisSection);
                 //display data associated with the element
                 displayFeatureOnMap($thisSection);
-                displayInfo(this.nextElementSibling);
             }
         });
     });
 });
-function displayInfo(element) {
-    $('#infofield').append(element);
-    $(element).append()
-}
